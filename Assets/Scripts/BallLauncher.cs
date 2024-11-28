@@ -7,14 +7,19 @@ public class BallLauncher : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetMouseButton(0))
-        {
-            Debug.DrawRay(_ball.transform.position, GetDirection());
-        }
+        Vector2 direction = GetDirection();
 
-        if (Input.GetMouseButtonUp(0))
+        if (direction.y > 0)
         {
-            _ball.Launch(GetDirection());
+            if (Input.GetMouseButton(0))
+            {
+                Debug.DrawRay(_ball.transform.position, direction);
+            }
+
+            if (Input.GetMouseButtonUp(0))
+            {
+                _ball.Launch(direction);
+            }
         }
     }
 

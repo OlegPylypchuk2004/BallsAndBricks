@@ -8,28 +8,16 @@ public class Ball : MonoBehaviour
     private bool _isLaunched;
     private Vector2 _direction;
 
-    private Vector2 _startPos;
-
-    private void Awake()
-    {
-        _startPos = transform.position;
-    }
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Backspace))
-        {
-            _isLaunched = false;
-            transform.position = _startPos;
-            _rigidbody2D.velocity = Vector2.zero;
-        }
-    }
-
     private void FixedUpdate()
     {
         if (_isLaunched)
         {
             _rigidbody2D.velocity = _direction * _speed;
+
+            if (transform.position.y < -4f)
+            {
+                Fall();
+            }
         }
     }
 
@@ -62,5 +50,18 @@ public class Ball : MonoBehaviour
         targetDirection = targetDirection.normalized;
 
         _direction = targetDirection;
+    }
+
+    private void Fall()
+    {
+        _isLaunched = false;
+
+        _rigidbody2D.velocity = Vector2.zero;
+
+        Vector2 targetPosition = transform.position;
+        targetPosition.x = Mathf.Clamp(targetPosition.x, -3.35f, 3.35f);
+        targetPosition.y = -4;
+
+        transform.position = targetPosition;
     }
 }
