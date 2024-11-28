@@ -21,6 +21,7 @@ public class Ball : MonoBehaviour
         {
             _isLaunched = false;
             transform.position = _startPos;
+            _rigidbody2D.velocity = Vector2.zero;
         }
     }
 
