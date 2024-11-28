@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1080894183116654974}
   - component: {fileID: 7424446989606173084}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -27,7 +27,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.35, y: 0.35, z: 0.35}
+  m_LocalScale: {x: 0.25, y: 0.25, z: 0.25}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 3031310301189052003}
@@ -96,7 +96,7 @@ GameObject:
   - component: {fileID: 6874786884406267673}
   - component: {fileID: 2004779278174082326}
   - component: {fileID: 2533519708857839379}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Ball
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -153,7 +153,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.175
+  m_Radius: 0.125
 --- !u!50 &2004779278174082326
 Rigidbody2D:
   serializedVersion: 4
@@ -193,5 +193,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e59c7ad99c817149b125afb1f1fb579, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _speed: 10
+  _speed: 12
   _rigidbody2D: {fileID: 2004779278174082326}

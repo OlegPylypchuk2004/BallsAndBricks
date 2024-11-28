@@ -1,18 +1,22 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 public class BallLauncher : MonoBehaviour
 {
-    [SerializeField] private Ball _ball;
+    [SerializeField] private Ball[] _balls;
     [SerializeField] private Camera _camera;
     [SerializeField] private Transform _targetTransform;
+
+    private int _fallenBallsCount;
+    private Vector2 _firstFallenBallPosition;
 
     public event Action LaunchStarted;
     public event Action BallsFallen;
 
     private void Start()
     {
-        _targetTransform.position = _ball.transform.position;
+        _targetTransform.position = _balls[0].transform.position;
     }
 
     public void TryLaunch()
@@ -25,7 +29,7 @@ public class BallLauncher : MonoBehaviour
 
             if (Input.GetMouseButton(0))
             {
-                Debug.DrawRay(_ball.transform.position, direction);
+                Debug.DrawRay(_balls[0].transform.position, direction);
 
                 float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
                 _targetTransform.rotation = Quaternion.Euler(0, 0, angle - 90f);
@@ -37,9 +41,7 @@ public class BallLauncher : MonoBehaviour
 
             if (Input.GetMouseButtonUp(0))
             {
-                _ball.Launch(direction);
-
-                _ball.Fallen += OnBallFallen;
+                StartCoroutine(Launch(direction));
 
                 LaunchStarted?.Invoke();
             }
@@ -52,7 +54,7 @@ public class BallLauncher : MonoBehaviour
 
     private Vector2 GetDirection()
     {
-        Vector2 direction = GetMouseWorldPosition() - (Vector2)_ball.transform.position;
+        Vector2 direction = GetMouseWorldPosition() - (Vector2)_balls[0].transform.position;
         direction = direction.normalized;
 
         return direction;
@@ -63,12 +65,40 @@ public class BallLauncher : MonoBehaviour
         return _camera.ScreenToWorldPoint(Input.mousePosition);
     }
 
-    private void OnBallFallen(Ball ball)
+    private IEnumerator Launch(Vector2 direction)
+    {
+        foreach (Ball ball in _balls)
+        {
+            ball.Launch(direction);
+
+            yield return new WaitForSeconds(0.1f);
+
+            ball.Fallen += OnBallFallen;
+        }
+    }
+
+    private void OnBallFallen(Ball ball, Vector2 position)
     {
         ball.Fallen -= OnBallFallen;
 
-        _targetTransform.position = ball.transform.position;
+        _fallenBallsCount++;
 
-        BallsFallen?.Invoke();
+        if (_balls[0] == ball)
+        {
+            _firstFallenBallPosition = position;
+        }
+
+        if (_fallenBallsCount >= _balls.Length)
+        {
+            _fallenBallsCount = 0;
+            _targetTransform.position = _balls[0].transform.position;
+
+            for (int i = 0; i < _balls.Length; i++)
+            {
+                _balls[i].transform.position = _firstFallenBallPosition;
+            }
+
+            BallsFallen?.Invoke();
+        }
     }
 }

@@ -12,7 +12,7 @@ public class Ball : MonoBehaviour
     private bool _isCanRebound;
     private Coroutine _lockReboundCoroutine;
 
-    public event Action<Ball> Fallen;
+    public event Action<Ball, Vector2> Fallen;
 
     private void Awake()
     {
@@ -87,7 +87,7 @@ public class Ball : MonoBehaviour
 
         transform.position = targetPosition;
 
-        Fallen?.Invoke(this);
+        Fallen?.Invoke(this, transform.position);
     }
 
     private IEnumerator LockRebound()
