@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 public class Ball : MonoBehaviour
@@ -8,8 +9,15 @@ public class Ball : MonoBehaviour
 
     private bool _isLaunched;
     private Vector2 _direction;
+    private bool _isCanRebound;
+    private Coroutine _lockReboundCoroutine;
 
     public event Action<Ball> Fallen;
+
+    private void Awake()
+    {
+        _isCanRebound = true;
+    }
 
     private void FixedUpdate()
     {
@@ -42,7 +50,7 @@ public class Ball : MonoBehaviour
 
     private void Rebound(Collision2D collision)
     {
-        if (!_isLaunched)
+        if (!_isLaunched || !_isCanRebound)
         {
             return;
         }
@@ -58,6 +66,13 @@ public class Ball : MonoBehaviour
         targetDirection = targetDirection.normalized;
 
         _direction = targetDirection;
+
+        if (_lockReboundCoroutine != null)
+        {
+            StopCoroutine(_lockReboundCoroutine);
+        }
+
+        _lockReboundCoroutine = StartCoroutine(LockRebound());
     }
 
     private void Fall()
@@ -73,5 +88,14 @@ public class Ball : MonoBehaviour
         transform.position = targetPosition;
 
         Fallen?.Invoke(this);
+    }
+
+    private IEnumerator LockRebound()
+    {
+        _isCanRebound = false;
+
+        yield return new WaitForSeconds(0.01f);
+
+        _isCanRebound = true;
     }
 }
