@@ -5,9 +5,15 @@ public class BallLauncher : MonoBehaviour
 {
     [SerializeField] private Ball _ball;
     [SerializeField] private Camera _camera;
+    [SerializeField] private Transform _targetTransform;
 
     public event Action LaunchStarted;
     public event Action BallsFallen;
+
+    private void Start()
+    {
+        _targetTransform.position = _ball.transform.position;
+    }
 
     public void TryLaunch()
     {
@@ -15,9 +21,18 @@ public class BallLauncher : MonoBehaviour
 
         if (direction.y > 0)
         {
+            _targetTransform.gameObject.SetActive(true);
+
             if (Input.GetMouseButton(0))
             {
-                Debug.DrawRay(_ball.transform.position, direction * 12.5f);
+                Debug.DrawRay(_ball.transform.position, direction);
+
+                float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+                _targetTransform.rotation = Quaternion.Euler(0, 0, angle - 90f);
+            }
+            else
+            {
+                _targetTransform.gameObject.SetActive(false);
             }
 
             if (Input.GetMouseButtonUp(0))
@@ -28,6 +43,10 @@ public class BallLauncher : MonoBehaviour
 
                 LaunchStarted?.Invoke();
             }
+        }
+        else
+        {
+            _targetTransform.gameObject.SetActive(false);
         }
     }
 
@@ -47,6 +66,8 @@ public class BallLauncher : MonoBehaviour
     private void OnBallFallen(Ball ball)
     {
         ball.Fallen -= OnBallFallen;
+
+        _targetTransform.position = ball.transform.position;
 
         BallsFallen?.Invoke();
     }
