@@ -18,7 +18,7 @@ public class BricksRow : MonoBehaviour
     {
         foreach (Transform brickPoint in _bricksPoints)
         {
-            if (true)
+            if (Random.Range(1, 3) >= 2)
             {
                 Brick brick = Instantiate(_brickPrefab);
                 brick.transform.SetParent(brickPoint.transform, false);

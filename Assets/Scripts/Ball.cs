@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class Ball : MonoBehaviour
@@ -7,6 +8,8 @@ public class Ball : MonoBehaviour
 
     private bool _isLaunched;
     private Vector2 _direction;
+
+    public event Action<Ball> Fallen;
 
     private void FixedUpdate()
     {
@@ -68,5 +71,7 @@ public class Ball : MonoBehaviour
         targetPosition.y = -4;
 
         transform.position = targetPosition;
+
+        Fallen?.Invoke(this);
     }
 }

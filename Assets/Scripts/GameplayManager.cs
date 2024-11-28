@@ -6,6 +6,9 @@ public class GameplayManager : MonoBehaviour
 {
     [SerializeField] private BricksRow _rowPrefab;
     [SerializeField] private Transform _rowsParentTransform;
+    [SerializeField] private BallLauncher _ballLauncher;
+
+    private bool _isCanLaunchBalls;
 
     private List<BricksRow> _rows;
 
@@ -14,11 +17,19 @@ public class GameplayManager : MonoBehaviour
         _rows = new List<BricksRow>();
     }
 
+    private void Start()
+    {
+        SpawnRow();
+
+        _isCanLaunchBalls = true;
+        _ballLauncher.LaunchStarted += OnLaunchStarted;
+    }
+
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Return))
+        if (_isCanLaunchBalls)
         {
-            SpawnRow();
+            _ballLauncher.TryLaunch();
         }
     }
 
@@ -46,5 +57,23 @@ public class GameplayManager : MonoBehaviour
         }
 
         return moveRowsSequence;
+    }
+
+    private void OnLaunchStarted()
+    {
+        _ballLauncher.LaunchStarted -= OnLaunchStarted;
+
+        _isCanLaunchBalls = false;
+        _ballLauncher.BallsFallen += OnBallsFallen;
+    }
+
+    private void OnBallsFallen()
+    {
+        _ballLauncher.BallsFallen -= OnBallsFallen;
+
+        SpawnRow();
+
+        _isCanLaunchBalls = true;
+        _ballLauncher.LaunchStarted += OnLaunchStarted;
     }
 }

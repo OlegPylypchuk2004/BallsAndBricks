@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class BallLauncher : MonoBehaviour
@@ -5,7 +6,10 @@ public class BallLauncher : MonoBehaviour
     [SerializeField] private Ball _ball;
     [SerializeField] private Camera _camera;
 
-    private void Update()
+    public event Action LaunchStarted;
+    public event Action BallsFallen;
+
+    public void TryLaunch()
     {
         Vector2 direction = GetDirection();
 
@@ -13,12 +17,16 @@ public class BallLauncher : MonoBehaviour
         {
             if (Input.GetMouseButton(0))
             {
-                Debug.DrawRay(_ball.transform.position, direction);
+                Debug.DrawRay(_ball.transform.position, direction * 12.5f);
             }
 
             if (Input.GetMouseButtonUp(0))
             {
                 _ball.Launch(direction);
+
+                _ball.Fallen += OnBallFallen;
+
+                LaunchStarted?.Invoke();
             }
         }
     }
@@ -34,5 +42,12 @@ public class BallLauncher : MonoBehaviour
     private Vector2 GetMouseWorldPosition()
     {
         return _camera.ScreenToWorldPoint(Input.mousePosition);
+    }
+
+    private void OnBallFallen(Ball ball)
+    {
+        ball.Fallen -= OnBallFallen;
+
+        BallsFallen?.Invoke();
     }
 }

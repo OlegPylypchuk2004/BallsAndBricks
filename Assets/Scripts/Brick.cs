@@ -9,7 +9,7 @@ public class Brick : MonoBehaviour
 
     private void Awake()
     {
-        _number = Random.Range(1, 4);
+        _number = 1;
         UpdateView();
     }
 
