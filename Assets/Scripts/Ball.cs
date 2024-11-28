@@ -24,6 +24,11 @@ public class Ball : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D collision)
     {
         Rebound(collision);
+
+        if (collision.gameObject.TryGetComponent(out Brick brick))
+        {
+            brick.Hit();
+        }
     }
 
     public void Launch(Vector2 direction)
