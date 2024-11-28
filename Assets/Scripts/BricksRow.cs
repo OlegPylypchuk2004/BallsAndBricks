@@ -27,9 +27,4 @@ public class BricksRow : MonoBehaviour
             }
         }
     }
-
-    public void MoveDown()
-    {
-        transform.position += Vector3.down;
-    }
 }

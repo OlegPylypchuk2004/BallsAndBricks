@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -23,17 +24,27 @@ public class GameplayManager : MonoBehaviour
 
     private void SpawnRow()
     {
-        MoveRows();
-
-        BricksRow row = Instantiate(_rowPrefab, new Vector3(0f, 4f, 0f), Quaternion.identity, _rowsParentTransform);
-        _rows.Add(row);
+        MoveRowsAnimation().OnComplete(() =>
+        {
+            BricksRow row = Instantiate(_rowPrefab, new Vector3(0f, 4f, 0f), Quaternion.identity, _rowsParentTransform);
+            _rows.Add(row);
+        });
     }
 
-    private void MoveRows()
+    private Tween MoveRowsAnimation()
     {
+        Sequence moveRowsSequence = DOTween.Sequence();
+
         foreach (BricksRow row in _rows)
         {
-            row.MoveDown();
+            Vector3 targetRowPosition = row.transform.position;
+            targetRowPosition.y -= 1;
+
+            moveRowsSequence.Join
+                (row.transform.DOMove(targetRowPosition, 0.25f)
+                .SetEase(Ease.Linear));
         }
+
+        return moveRowsSequence;
     }
 }
