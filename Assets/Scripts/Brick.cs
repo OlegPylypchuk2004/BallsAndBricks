@@ -12,7 +12,7 @@ public class Brick : MonoBehaviour
 
     public event Action<Brick> Destroyed;
 
-    private void Awake()
+    private void OnEnable()
     {
         _number = Mathf.Clamp(ScoreManager.Instance.Score + UnityEngine.Random.Range(-5, 5), 1, int.MaxValue);
 
@@ -30,7 +30,6 @@ public class Brick : MonoBehaviour
 
         if (_number <= 0)
         {
-            Destroy(gameObject);
             Destroyed?.Invoke(this);
         }
 

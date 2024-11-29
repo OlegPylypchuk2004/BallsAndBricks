@@ -4,22 +4,24 @@ using UnityEngine;
 
 public class GameplayManager : MonoBehaviour
 {
-    [SerializeField] private BricksRow _rowPrefab;
-    [SerializeField] private Transform _rowsParentTransform;
     [SerializeField] private BallLauncher _ballLauncher;
+    [SerializeField] private Transform[] _bricksPoints;
 
     private bool _isCanLaunchBalls;
-
-    private List<BricksRow> _rows;
+    private ObjectPool<Brick> _bricksPool;
+    private List<Brick> _bricks;
 
     private void Awake()
     {
-        _rows = new List<BricksRow>();
+        _bricks = new List<Brick>();
+
+        Brick brickPrefab = Resources.Load<Brick>("Prefabs/Brick");
+        _bricksPool = new ObjectPool<Brick>(brickPrefab, 10);
     }
 
     private void Start()
     {
-        SpawnRow();
+        SpawnBricks();
 
         _isCanLaunchBalls = true;
         _ballLauncher.LaunchStarted += OnLaunchStarted;
@@ -33,37 +35,46 @@ public class GameplayManager : MonoBehaviour
         }
     }
 
-    private void SpawnRow()
+    private void SpawnBricks()
     {
-        MoveRowsAnimation().OnComplete(() =>
+        MoveBricksAnimation().OnComplete(() =>
         {
-            BricksRow row = Instantiate(_rowPrefab, new Vector3(0f, 3.5f, 0f), Quaternion.identity, _rowsParentTransform);
-            _rows.Add(row);
-            row.Destroyed += OnRowDestroyed;
+            foreach (Transform brickPoint in _bricksPoints)
+            {
+                if (Random.Range(1, 3) >= 2)
+                {
+                    Brick brick = _bricksPool.GetObject();
+                    brick.transform.position = brickPoint.transform.position;
+                    brick.Destroyed += OnBrickDestroyed;
+
+                    _bricks.Add(brick);
+                }
+            }
         });
     }
 
-    private void OnRowDestroyed(BricksRow row)
+    private void OnBrickDestroyed(Brick brick)
     {
-        row.Destroyed -= OnRowDestroyed;
-        _rows.Remove(row);
+        brick.Destroyed -= OnBrickDestroyed;
+        _bricks.Remove(brick);
+        _bricksPool.ReturnObject(brick);
     }
 
-    private Tween MoveRowsAnimation()
+    private Tween MoveBricksAnimation()
     {
-        Sequence moveRowsSequence = DOTween.Sequence();
+        Sequence moveBricksSequence = DOTween.Sequence();
 
-        foreach (BricksRow row in _rows)
+        foreach (Brick brick in _bricks)
         {
-            Vector3 targetRowPosition = row.transform.position;
-            targetRowPosition.y -= 1;
+            Vector3 targetBrickPosition = brick.transform.position;
+            targetBrickPosition.y -= 1;
 
-            moveRowsSequence.Join
-                (row.transform.DOMove(targetRowPosition, 0.25f)
+            moveBricksSequence.Join
+                (brick.transform.DOMove(targetBrickPosition, 0.25f)
                 .SetEase(Ease.Linear));
         }
 
-        return moveRowsSequence;
+        return moveBricksSequence;
     }
 
     private void OnLaunchStarted()
@@ -79,7 +90,7 @@ public class GameplayManager : MonoBehaviour
         _ballLauncher.BallsFallen -= OnBallsFallen;
 
         ScoreManager.Instance.AddScore();
-        SpawnRow();
+        SpawnBricks();
 
         _isCanLaunchBalls = true;
         _ballLauncher.LaunchStarted += OnLaunchStarted;
