@@ -39,7 +39,14 @@ public class GameplayManager : MonoBehaviour
         {
             BricksRow row = Instantiate(_rowPrefab, new Vector3(0f, 3.5f, 0f), Quaternion.identity, _rowsParentTransform);
             _rows.Add(row);
+            row.Destroyed += OnRowDestroyed;
         });
+    }
+
+    private void OnRowDestroyed(BricksRow row)
+    {
+        row.Destroyed -= OnRowDestroyed;
+        _rows.Remove(row);
     }
 
     private Tween MoveRowsAnimation()
@@ -71,6 +78,7 @@ public class GameplayManager : MonoBehaviour
     {
         _ballLauncher.BallsFallen -= OnBallsFallen;
 
+        ScoreManager.Instance.AddScore();
         SpawnRow();
 
         _isCanLaunchBalls = true;

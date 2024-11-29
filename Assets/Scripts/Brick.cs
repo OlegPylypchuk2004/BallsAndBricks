@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 
@@ -7,9 +8,11 @@ public class Brick : MonoBehaviour
 
     private int _number;
 
+    public event Action<Brick> Destroyed;
+
     private void Awake()
     {
-        _number = Random.Range(5, 26);
+        _number = Mathf.Clamp(ScoreManager.Instance.Score + UnityEngine.Random.Range(-5, 5), 1, int.MaxValue);
         UpdateView();
     }
 
@@ -20,6 +23,7 @@ public class Brick : MonoBehaviour
         if (_number <= 0)
         {
             Destroy(gameObject);
+            Destroyed?.Invoke(this);
         }
 
         UpdateView();

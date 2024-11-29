@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,6 +8,8 @@ public class BricksRow : MonoBehaviour
     [SerializeField] private Transform[] _bricksPoints;
 
     private List<Brick> _bricks;
+
+    public event Action<BricksRow> Destroyed;
 
     private void Awake()
     {
@@ -18,13 +21,25 @@ public class BricksRow : MonoBehaviour
     {
         foreach (Transform brickPoint in _bricksPoints)
         {
-            if (Random.Range(1, 3) >= 2)
+            if (UnityEngine.Random.Range(1, 3) >= 2)
             {
                 Brick brick = Instantiate(_brickPrefab);
                 brick.transform.SetParent(brickPoint.transform, false);
 
                 _bricks.Add(brick);
+                brick.Destroyed += OnBrickDestroyed;
             }
+        }
+    }
+
+    private void OnBrickDestroyed(Brick brick)
+    {
+        _bricks.Remove(brick);
+
+        if (_bricks.Count <= 0)
+        {
+            Destroy(gameObject);
+            Destroyed?.Invoke(this);
         }
     }
 }
