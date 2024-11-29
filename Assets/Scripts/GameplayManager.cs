@@ -33,6 +33,15 @@ public class GameplayManager : MonoBehaviour
         {
             _ballLauncher.TryLaunch();
         }
+
+        if (Input.GetKey(KeyCode.Space))
+        {
+            Time.timeScale = 1.5f;
+        }
+        else
+        {
+            Time.timeScale = 1.0f;
+        }
     }
 
     private void SpawnBricks()
