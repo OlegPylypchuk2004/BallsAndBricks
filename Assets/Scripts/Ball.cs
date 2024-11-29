@@ -25,7 +25,7 @@ public class Ball : MonoBehaviour
         {
             _rigidbody2D.velocity = _direction * _speed;
 
-            if (transform.position.y < -4.25f)
+            if (transform.position.y < -4.75f)
             {
                 Fall();
             }
@@ -83,7 +83,7 @@ public class Ball : MonoBehaviour
 
         Vector2 targetPosition = transform.position;
         targetPosition.x = Mathf.Clamp(targetPosition.x, -3.35f, 3.35f);
-        targetPosition.y = -4.25f;
+        targetPosition.y = -4.75f;
 
         transform.position = targetPosition;
 

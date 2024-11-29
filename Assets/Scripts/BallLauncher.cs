@@ -1,13 +1,15 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class BallLauncher : MonoBehaviour
 {
-    [SerializeField] private Ball[] _balls;
+    [SerializeField] private Ball _ballPrefab;
     [SerializeField] private Camera _camera;
     [SerializeField] private Transform _targetTransform;
 
+    private List<Ball> _balls;
     private int _fallenBallsCount;
     private Vector2 _firstFallenBallPosition;
 
@@ -16,7 +18,17 @@ public class BallLauncher : MonoBehaviour
 
     private void Start()
     {
+        _balls = new List<Ball>();
+
+        SpawnBall();
+        _balls[0].transform.position = new Vector2(0f, -4.75f);
         _targetTransform.position = _balls[0].transform.position;
+    }
+
+    private void SpawnBall()
+    {
+        Ball ball = Instantiate(_ballPrefab);
+        _balls.Add(ball);
     }
 
     public void TryLaunch()
@@ -69,9 +81,10 @@ public class BallLauncher : MonoBehaviour
     {
         foreach (Ball ball in _balls)
         {
+            ball.gameObject.SetActive(true);
             ball.Launch(direction);
 
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(0.075f);
 
             ball.Fallen += OnBallFallen;
         }
@@ -88,13 +101,20 @@ public class BallLauncher : MonoBehaviour
             _firstFallenBallPosition = position;
         }
 
-        if (_fallenBallsCount >= _balls.Length)
+        if (_fallenBallsCount >= _balls.Count)
         {
             _fallenBallsCount = 0;
             _targetTransform.position = _balls[0].transform.position;
 
-            for (int i = 0; i < _balls.Length; i++)
+            SpawnBall();
+
+            for (int i = 0; i < _balls.Count; i++)
             {
+                if (i != 0)
+                {
+                    _balls[i].gameObject.SetActive(false);
+                }
+
                 _balls[i].transform.position = _firstFallenBallPosition;
             }
 

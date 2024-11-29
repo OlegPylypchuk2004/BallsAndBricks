@@ -37,7 +37,7 @@ public class GameplayManager : MonoBehaviour
     {
         MoveRowsAnimation().OnComplete(() =>
         {
-            BricksRow row = Instantiate(_rowPrefab, new Vector3(0f, 4f, 0f), Quaternion.identity, _rowsParentTransform);
+            BricksRow row = Instantiate(_rowPrefab, new Vector3(0f, 3.5f, 0f), Quaternion.identity, _rowsParentTransform);
             _rows.Add(row);
         });
     }
