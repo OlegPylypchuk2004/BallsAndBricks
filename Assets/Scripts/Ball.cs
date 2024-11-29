@@ -32,7 +32,7 @@ public class Ball : MonoBehaviour
         }
     }
 
-    private void OnCollisionStay2D(Collision2D collision)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
         Rebound(collision);
 
@@ -94,7 +94,7 @@ public class Ball : MonoBehaviour
     {
         _isCanRebound = false;
 
-        yield return new WaitForSeconds(0.025f);
+        yield return new WaitForSeconds(0.005f);
 
         _isCanRebound = true;
     }
