@@ -25,10 +25,15 @@ public class BallLauncher : MonoBehaviour
         _targetTransform.position = _balls[0].transform.position;
     }
 
-    private void SpawnBall()
+    public void SpawnBall(int count = 1)
     {
-        Ball ball = Instantiate(_ballPrefab);
-        _balls.Add(ball);
+        for (int i = 0; i < count; i++)
+        {
+            Ball ball = Instantiate(_ballPrefab);
+            _balls.Add(ball);
+        }
+
+        ResetBalls();
     }
 
     public void TryLaunch()
@@ -106,19 +111,20 @@ public class BallLauncher : MonoBehaviour
             _fallenBallsCount = 0;
             _targetTransform.position = _balls[0].transform.position;
 
-            SpawnBall();
+            BallsFallen?.Invoke();
+        }
+    }
 
-            for (int i = 0; i < _balls.Count; i++)
+    private void ResetBalls()
+    {
+        for (int i = 0; i < _balls.Count; i++)
+        {
+            if (i != 0)
             {
-                if (i != 0)
-                {
-                    _balls[i].gameObject.SetActive(false);
-                }
-
-                _balls[i].transform.position = _firstFallenBallPosition;
+                _balls[i].gameObject.SetActive(false);
             }
 
-            BallsFallen?.Invoke();
+            _balls[i].transform.position = _firstFallenBallPosition;
         }
     }
 }
