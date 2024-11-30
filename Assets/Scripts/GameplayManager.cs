@@ -7,6 +7,7 @@ public class GameplayManager : MonoBehaviour
 {
     [SerializeField] private BallLauncher _ballLauncher;
     [SerializeField] private Transform[] _bricksPoints;
+    [SerializeField] private PausePanel _pausePanel;
 
     private bool _isCanLaunchBalls;
     private ObjectPool<Brick> _bricksPool;
@@ -38,13 +39,9 @@ public class GameplayManager : MonoBehaviour
             _ballLauncher.TryLaunch();
         }
 
-        if (Input.GetKey(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Backspace))
         {
-            Time.timeScale = 1.5f;
-        }
-        else
-        {
-            Time.timeScale = 1.0f;
+            SetPause(true);
         }
     }
 
@@ -52,8 +49,8 @@ public class GameplayManager : MonoBehaviour
     {
         MoveRowsAnimation().OnComplete(() =>
         {
-            int randonPointsCount = Random.Range(3, _bricksPoints.Length);
-            List<Transform> randomBricksPoints = _bricksPoints.OrderBy(_ => Random.value).Take(randonPointsCount).ToList();
+            int randonPointsCount = UnityEngine.Random.Range(3, _bricksPoints.Length);
+            List<Transform> randomBricksPoints = _bricksPoints.OrderBy(_ => UnityEngine.Random.value).Take(randonPointsCount).ToList();
 
             for (int i = 0; i < randomBricksPoints.Count; i++)
             {
@@ -144,5 +141,18 @@ public class GameplayManager : MonoBehaviour
         Destroy((pickupable as MonoBehaviour)?.gameObject);
 
         _pickedBallsCount++;
+    }
+
+    private void SetPause(bool isPaused)
+    {
+        if (isPaused)
+        {
+            Time.timeScale = 0f;
+            _pausePanel.Appear();
+        }
+        else
+        {
+            Time.timeScale = 1f;
+        }
     }
 }
