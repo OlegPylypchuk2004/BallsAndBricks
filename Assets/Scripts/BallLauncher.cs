@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class BallLauncher : MonoBehaviour
@@ -8,6 +9,7 @@ public class BallLauncher : MonoBehaviour
     [SerializeField] private Ball _ballPrefab;
     [SerializeField] private Camera _camera;
     [SerializeField] private Transform _targetTransform;
+    [SerializeField] private TextMeshProUGUI _ballsCountText;
 
     private List<Ball> _balls;
     private int _fallenBallsCount;
@@ -23,6 +25,8 @@ public class BallLauncher : MonoBehaviour
         SpawnBall();
         _balls[0].transform.position = new Vector2(0f, -4.75f);
         _targetTransform.position = _balls[0].transform.position;
+
+        _ballsCountText.text = $"x{_balls.Count}";
     }
 
     public void SpawnBall(int count = 1)
@@ -84,10 +88,23 @@ public class BallLauncher : MonoBehaviour
 
     private IEnumerator Launch(Vector2 direction)
     {
+        int notLaunchedBallsCount = _balls.Count;
+
         foreach (Ball ball in _balls)
         {
             ball.gameObject.SetActive(true);
             ball.Launch(direction);
+
+            notLaunchedBallsCount--;
+
+            if (notLaunchedBallsCount > 0)
+            {
+                _ballsCountText.text = $"x{notLaunchedBallsCount}";
+            }
+            else
+            {
+                _ballsCountText.text = "";
+            }
 
             yield return new WaitForSeconds(0.075f);
 
@@ -126,5 +143,7 @@ public class BallLauncher : MonoBehaviour
 
             _balls[i].transform.position = _firstFallenBallPosition;
         }
+
+        _ballsCountText.text = $"x{_balls.Count}";
     }
 }
