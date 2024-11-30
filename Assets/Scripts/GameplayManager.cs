@@ -82,6 +82,8 @@ public class GameplayManager : MonoBehaviour
         brick.Destroyed -= OnBrickDestroyed;
         _bricks.Remove(brick);
         _bricksPool.ReturnObject(brick);
+
+        ScoreManager.Instance.AddBrickDestroyCount();
     }
 
     private Tween MoveRowsAnimation()
@@ -128,7 +130,7 @@ public class GameplayManager : MonoBehaviour
         _ballLauncher.SpawnBall(_pickedBallsCount);
         _pickedBallsCount = 0;
 
-        ScoreManager.Instance.AddScore();
+        ScoreManager.Instance.AddBrickMove();
         SpawnBricks();
 
         _isCanLaunchBalls = true;

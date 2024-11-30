@@ -1,8 +1,13 @@
+using System;
 using UnityEngine;
 
 public class ScoreManager : MonoBehaviour
 {
-    private int _score;
+    private int _brickMovesCount;
+    private int _brickDestroyCount;
+
+    public event Action<int> BricksMoveCountChanged;
+    public event Action<int> BricksDestroyCountChanged;
 
     public static ScoreManager Instance { get; private set; }
 
@@ -18,13 +23,25 @@ public class ScoreManager : MonoBehaviour
         }
     }
 
-    public int Score
+    public int BrickMovesCount
     {
-        get { return _score; }
+        get { return _brickMovesCount; }
     }
 
-    public void AddScore()
+    public int BrickDestroyCount
     {
-        _score++;
+        get { return _brickDestroyCount; }
+    }
+
+    public void AddBrickMove()
+    {
+        _brickMovesCount++;
+        BricksMoveCountChanged?.Invoke(_brickMovesCount);
+    }
+
+    public void AddBrickDestroyCount()
+    {
+        _brickDestroyCount++;
+        BricksDestroyCountChanged?.Invoke(_brickDestroyCount);
     }
 }

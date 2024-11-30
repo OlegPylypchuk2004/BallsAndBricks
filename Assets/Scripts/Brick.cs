@@ -14,7 +14,7 @@ public class Brick : MonoBehaviour
 
     private void OnEnable()
     {
-        _number = Mathf.Clamp(ScoreManager.Instance.Score + UnityEngine.Random.Range(-5, 5), 1, int.MaxValue);
+        _number = Mathf.Clamp(ScoreManager.Instance.BrickMovesCount + UnityEngine.Random.Range(0, 5), 1, int.MaxValue);
 
         _numberText.text = $"{_number}";
 
