@@ -11,11 +11,13 @@ public class GameplayManager : MonoBehaviour
     private bool _isCanLaunchBalls;
     private ObjectPool<Brick> _bricksPool;
     private List<Brick> _bricks;
+    private List<IPickupable> _pickupables;
     private int _pickedBallsCount;
 
     private void Awake()
     {
         _bricks = new List<Brick>();
+        _pickupables = new List<IPickupable>();
 
         Brick brickPrefab = Resources.Load<Brick>("Prefabs/Brick");
         _bricksPool = new ObjectPool<Brick>(brickPrefab, 10);
@@ -48,7 +50,7 @@ public class GameplayManager : MonoBehaviour
 
     private void SpawnBricks()
     {
-        MoveBricksAnimation().OnComplete(() =>
+        MoveRowsAnimation().OnComplete(() =>
         {
             int randonPointsCount = Random.Range(3, _bricksPoints.Length);
             List<Transform> randomBricksPoints = _bricksPoints.OrderBy(_ => Random.value).Take(randonPointsCount).ToList();
@@ -60,6 +62,8 @@ public class GameplayManager : MonoBehaviour
                     PickupableBall pickupableBall = Instantiate(Resources.Load<PickupableBall>("Prefabs/PickupableBall"));
                     pickupableBall.transform.position = randomBricksPoints[i].position;
                     pickupableBall.Picked += OnPickupableBallPicked;
+
+                    _pickupables.Add(pickupableBall);
                 }
                 else
                 {
@@ -80,17 +84,29 @@ public class GameplayManager : MonoBehaviour
         _bricksPool.ReturnObject(brick);
     }
 
-    private Tween MoveBricksAnimation()
+    private Tween MoveRowsAnimation()
     {
         Sequence moveBricksSequence = DOTween.Sequence();
 
         foreach (Brick brick in _bricks)
         {
-            Vector3 targetBrickPosition = brick.transform.position;
-            targetBrickPosition.y -= 1;
+            Vector3 targetPosition = brick.transform.position;
+            targetPosition.y -= 1;
 
             moveBricksSequence.Join
-                (brick.transform.DOMove(targetBrickPosition, 0.25f)
+                (brick.transform.DOMove(targetPosition, 0.25f)
+                .SetEase(Ease.Linear));
+        }
+
+        foreach (IPickupable pickupable in _pickupables)
+        {
+            Transform pickupableTransform = (pickupable as MonoBehaviour).transform;
+
+            Vector3 targetPosition = pickupableTransform.position;
+            targetPosition.y -= 1;
+
+            moveBricksSequence.Join
+                (pickupableTransform.DOMove(targetPosition, 0.25f)
                 .SetEase(Ease.Linear));
         }
 
@@ -122,6 +138,7 @@ public class GameplayManager : MonoBehaviour
     private void OnPickupableBallPicked(IPickupable pickupable)
     {
         pickupable.Picked -= OnPickupableBallPicked;
+        _pickupables.Remove(pickupable);
         Destroy((pickupable as MonoBehaviour)?.gameObject);
 
         _pickedBallsCount++;
