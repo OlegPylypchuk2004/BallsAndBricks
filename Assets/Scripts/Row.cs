@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,6 +7,8 @@ public class Row : MonoBehaviour
     [SerializeField] private Transform[] _points;
 
     private List<Brick> _bricks;
+
+    public event Action<Row> AllBricksBrokeDown;
 
     private void Awake()
     {
@@ -25,5 +28,10 @@ public class Row : MonoBehaviour
     {
         _bricks.Remove(brick);
         brick.BrokeDown -= OnBrickBrokeDown;
+
+        if (_bricks.Count <= 0)
+        {
+            AllBricksBrokeDown?.Invoke(this);
+        }
     }
 }

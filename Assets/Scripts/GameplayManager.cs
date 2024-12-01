@@ -10,21 +10,27 @@ public class GameplayManager : MonoBehaviour
     [SerializeField] private PausePanel _pausePanel;
 
     private bool _isCanLaunchBalls;
-    private ObjectPool<Brick> _bricksPool;
     private List<Row> _rows;
     private List<IPickupable> _pickupables;
     private int _pickedBallsCount;
     private bool _isPaused;
 
-    [SerializeField] private Brick _brickPrefab;
-    [SerializeField] private Row _rowPrefab;
+    private ObjectPool<Row> _rowsPool;
+    private ObjectPool<Brick> _bricksPool;
+
+    public Row rowPrefab;
+    public Brick brickPrefab;
 
     private void Start()
     {
         _rows = new List<Row>();
         _pickupables = new List<IPickupable>();
 
-        _bricksPool = new ObjectPool<Brick>(_brickPrefab, 10);
+        //Row rowPrefab = Resources.Load<Row>("Prefabs/Row");
+        _rowsPool = new ObjectPool<Row>(rowPrefab, 5);
+
+        //Brick brickPrefab = Resources.Load<Brick>("Prefabs/Row");
+        _bricksPool = new ObjectPool<Brick>(brickPrefab, 10);
 
         GameData gameData = GameDataManager.LoadGameData();
         RowData[] rowDatas = gameData.RowDatas.ToArray();
@@ -33,20 +39,22 @@ public class GameplayManager : MonoBehaviour
         {
             foreach (RowData rowData in rowDatas)
             {
-                Row row = Instantiate(_rowPrefab);
+                Row row = _rowsPool.GetObject();
                 row.transform.position = rowData.Position;
 
                 _rows.Add(row);
 
                 foreach (BrickData brickData in rowData.BrickDatas)
                 {
-                    Brick brick = Instantiate(_brickPrefab);
+                    Brick brick = _bricksPool.GetObject();
                     brick.transform.SetParent(row.transform);
                     brick.transform.localPosition = new Vector2(brickData.Position.x, 0f);
                     brick.Number = brickData.Number;
 
                     row.AddBrick(brick);
                 }
+
+                row.AllBricksBrokeDown += OnRowsAllBricksBrokeDown;
             }
         }
         else
@@ -89,14 +97,14 @@ public class GameplayManager : MonoBehaviour
 
     private void SpawnRow()
     {
-        Row row = Instantiate(_rowPrefab);
+        Row row = _rowsPool.GetObject();
         row.transform.position = new Vector2(0f, 3.5f);
 
         int bricksCount = Random.Range(3, row.Points.Length);
 
         for (int i = 0; i < bricksCount; i++)
         {
-            Brick brick = Instantiate(_brickPrefab);
+            Brick brick = _bricksPool.GetObject();
             brick.transform.SetParent(row.transform);
             brick.transform.localPosition = new Vector2(row.Points[i].position.x, 0f);
             brick.Number = Random.Range(3, 25);
@@ -106,6 +114,7 @@ public class GameplayManager : MonoBehaviour
         }
 
         _rows.Add(row);
+        row.AllBricksBrokeDown += OnRowsAllBricksBrokeDown;
     }
 
     private void SaveGame()
@@ -129,11 +138,23 @@ public class GameplayManager : MonoBehaviour
         GameDataManager.SaveGameData(gameData);
     }
 
+    private void LoadGame()
+    {
+
+    }
+
     private void OnBrickBrokeDown(Brick brick)
     {
         brick.BrokeDown -= OnBrickBrokeDown;
 
+        brick.transform.SetParent(null);
+        _bricksPool.ReturnObject(brick);
         ScoreManager.Instance.AddBrickDestroyCount();
+    }
+
+    private void OnRowsAllBricksBrokeDown(Row row)
+    {
+        _rowsPool.ReturnObject(row);
     }
 
     private Tween PlayMoveRowsAnimation()

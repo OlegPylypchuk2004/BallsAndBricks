@@ -3143,8 +3143,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _ballLauncher: {fileID: 1356693116}
   _pausePanel: {fileID: 462707819}
-  _brickPrefab: {fileID: -133344002320597314, guid: 06a1883568116ed4194f03b1f4ae256d, type: 3}
-  _rowPrefab: {fileID: 1429408204516970666, guid: c8c3d3cbe2049634dbbff010cddc0df6, type: 3}
+  rowPrefab: {fileID: 1429408204516970666, guid: c8c3d3cbe2049634dbbff010cddc0df6, type: 3}
+  brickPrefab: {fileID: -133344002320597314, guid: 06a1883568116ed4194f03b1f4ae256d, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

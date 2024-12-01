@@ -43,8 +43,6 @@ public class Brick : MonoBehaviour
 
         if (_number <= 0)
         {
-            Destroy(gameObject);
-
             BrokeDown?.Invoke(this);
         }
 
