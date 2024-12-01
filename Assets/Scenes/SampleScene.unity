@@ -3151,6 +3151,7 @@ MonoBehaviour:
   - {fileID: 1114896687414431225}
   - {fileID: 8813968453887006900}
   _pausePanel: {fileID: 462707819}
+  _isLoad: 1
 --- !u!1 &1043636262828360945
 GameObject:
   m_ObjectHideFlags: 0

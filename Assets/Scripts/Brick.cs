@@ -14,10 +14,23 @@ public class Brick : MonoBehaviour
 
     public event Action<Brick> Destroyed;
 
-    private void OnEnable()
+    public void LoadData(BrickData brickData)
+    {
+        transform.position = brickData.Position;
+        _number = brickData.Number;
+
+        UP();
+    }
+
+    public void RandomInit()
     {
         _number = Mathf.Clamp(ScoreManager.Instance.BrickMovesCount + UnityEngine.Random.Range(0, 5), 1, int.MaxValue);
 
+        UP();
+    }
+
+    private void UP()
+    {
         _numberText.text = $"{_number}";
 
         _textAnimation = _numberText.transform.DOPunchScale(Vector3.one * 0.5f, 0.25f)
@@ -26,6 +39,11 @@ public class Brick : MonoBehaviour
             .Pause();
 
         UpdateColor();
+    }
+
+    public int Number
+    {
+        get { return _number; }
     }
 
     public void Hit()

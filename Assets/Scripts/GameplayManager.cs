@@ -17,18 +17,33 @@ public class GameplayManager : MonoBehaviour
     private int _pickedBallsCount;
     private bool _isPaused;
 
-    private void Awake()
+    private void Start()
     {
         _bricks = new List<Brick>();
         _pickupables = new List<IPickupable>();
 
         Brick brickPrefab = Resources.Load<Brick>("Prefabs/Brick");
         _bricksPool = new ObjectPool<Brick>(brickPrefab, 10);
-    }
 
-    private void Start()
-    {
-        SpawnBricks();
+        GameData gameData = GameDataManager.LoadGameData();
+
+        if (gameData.BrickDatas.Count > 0)
+        {
+            foreach (BrickData brickData in gameData.BrickDatas)
+            {
+                Debug.LogError(brickData.Number);
+                Brick brick = _bricksPool.GetObject();
+                brick.LoadData(brickData);
+
+                brick.Destroyed += OnBrickDestroyed;
+
+                _bricks.Add(brick);
+            }
+        }
+        else
+        {
+            SpawnBricks();
+        }
 
         _isCanLaunchBalls = true;
         _ballLauncher.LaunchStarted += OnLaunchStarted;
@@ -55,6 +70,29 @@ public class GameplayManager : MonoBehaviour
         {
             Time.timeScale = 2f;
         }
+
+        if (Input.GetKeyDown(KeyCode.Return))
+        {
+            GameDataManager.DeleteSave();
+        }
+
+        if (Input.GetKeyDown(KeyCode.S))
+        {
+            GameData gameData = new GameData();
+
+            foreach (Brick brick in _bricks)
+            {
+                Debug.Log(brick.Number);
+                gameData.SaveBrick(brick.Number, brick.transform.position);
+
+                if (brick == null)
+                {
+
+                }
+            }
+
+            GameDataManager.SaveGameData(gameData);
+        }
     }
 
     private void SpawnBricks()
@@ -77,6 +115,7 @@ public class GameplayManager : MonoBehaviour
                 else
                 {
                     Brick brick = _bricksPool.GetObject();
+                    brick.RandomInit();
                     brick.transform.position = randomBricksPoints[i].position;
                     brick.Destroyed += OnBrickDestroyed;
 
