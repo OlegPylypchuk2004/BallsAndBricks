@@ -41,7 +41,8 @@ public class GameplayManager : MonoBehaviour
                 foreach (BrickData brickData in rowData.BrickDatas)
                 {
                     Brick brick = Instantiate(brickPrefab);
-                    brick.transform.localPosition = brickData.Position;
+                    brick.transform.SetParent(row.transform);
+                    brick.transform.localPosition = new Vector2(brickData.Position.x, 0f);
                     brick.Number = brickData.Number;
 
                     row.AddBrick(brick);
@@ -58,7 +59,8 @@ public class GameplayManager : MonoBehaviour
             for (int i = 0; i < bricksCount; i++)
             {
                 Brick brick = Instantiate(brickPrefab);
-                brick.transform.localPosition = row.Points[i].position;
+                brick.transform.SetParent(row.transform);
+                brick.transform.localPosition = new Vector2(row.Points[i].position.x, 0f);
                 brick.Number = Random.Range(3, 25);
                 brick.BrokeDown += OnBrickBrokeDown;
 
@@ -99,11 +101,6 @@ public class GameplayManager : MonoBehaviour
             GameDataManager.DeleteSave();
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
-
-        if (Input.GetKeyDown(KeyCode.S))
-        {
-            SaveGame();
-        }
     }
 
     private void SaveGame()
@@ -127,14 +124,6 @@ public class GameplayManager : MonoBehaviour
         GameDataManager.SaveGameData(gameData);
     }
 
-    private void SpawnBricks()
-    {
-        MoveRowsAnimation().OnComplete(() =>
-        {
-
-        });
-    }
-
     private void OnBrickBrokeDown(Brick brick)
     {
         brick.BrokeDown -= OnBrickBrokeDown;
@@ -142,33 +131,21 @@ public class GameplayManager : MonoBehaviour
         ScoreManager.Instance.AddBrickDestroyCount();
     }
 
-    private Tween MoveRowsAnimation()
+    private Tween PlayMoveRowsAnimation()
     {
-        Sequence moveBricksSequence = DOTween.Sequence();
+        Sequence moveRowsSequence = DOTween.Sequence();
 
-        //foreach (Brick brick in _bricks)
-        //{
-        //    Vector3 targetPosition = brick.transform.position;
-        //    targetPosition.y -= 1;
+        foreach (Row row in _rows)
+        {
+            Vector3 targetRowPosition = row.transform.position;
+            targetRowPosition.y -= 1;
 
-        //    moveBricksSequence.Join
-        //        (brick.transform.DOMove(targetPosition, 0.25f)
-        //        .SetEase(Ease.Linear));
-        //}
+            moveRowsSequence.Join
+                (row.transform.DOMove(targetRowPosition, 0.25f)
+                .SetEase(Ease.Linear));
+        }
 
-        //foreach (IPickupable pickupable in _pickupables)
-        //{
-        //    Transform pickupableTransform = (pickupable as MonoBehaviour).transform;
-
-        //    Vector3 targetPosition = pickupableTransform.position;
-        //    targetPosition.y -= 1;
-
-        //    moveBricksSequence.Join
-        //        (pickupableTransform.DOMove(targetPosition, 0.25f)
-        //        .SetEase(Ease.Linear));
-        //}
-
-        return moveBricksSequence;
+        return moveRowsSequence;
     }
 
     private void OnLaunchStarted()
@@ -192,10 +169,15 @@ public class GameplayManager : MonoBehaviour
         _pickedBallsCount = 0;
 
         ScoreManager.Instance.AddBrickMove();
-        SpawnBricks();
 
-        _isCanLaunchBalls = true;
-        _ballLauncher.LaunchStarted += OnLaunchStarted;
+        PlayMoveRowsAnimation()
+            .OnComplete(() =>
+            {
+                SaveGame();
+
+                _isCanLaunchBalls = true;
+                _ballLauncher.LaunchStarted += OnLaunchStarted;
+            });
     }
 
     private void OnPickupableBallPicked(IPickupable pickupable)
