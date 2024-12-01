@@ -1,6 +1,7 @@
 using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
@@ -74,13 +75,17 @@ public class GameplayManager : MonoBehaviour
         Row row = _rowsPool.GetObject();
         row.transform.position = new Vector2(0f, 3.5f);
 
-        int bricksCount = Random.Range(3, row.Points.Length);
+        int pointsCount = Random.Range(4, row.Points.Length);
+        List<Transform> randomBricksPoints = row.Points
+            .OrderBy(_ => Random.value)
+            .Take(pointsCount)
+            .ToList();
 
-        for (int i = 0; i < bricksCount; i++)
+        foreach (var point in randomBricksPoints)
         {
             Brick brick = _bricksPool.GetObject();
             brick.transform.SetParent(row.transform);
-            brick.transform.localPosition = new Vector2(row.Points[i].position.x, 0f);
+            brick.transform.position = point.position;
             brick.Number = Random.Range(3, 25);
             brick.BrokeDown += OnBrickBrokeDown;
 
