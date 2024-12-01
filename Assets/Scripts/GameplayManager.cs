@@ -50,13 +50,18 @@ public class GameplayManager : MonoBehaviour
         {
             SetPause(true);
         }
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Time.timeScale = 2f;
+        }
     }
 
     private void SpawnBricks()
     {
         MoveRowsAnimation().OnComplete(() =>
         {
-            int randonPointsCount = UnityEngine.Random.Range(3, _bricksPoints.Length);
+            int randonPointsCount = UnityEngine.Random.Range(5, _bricksPoints.Length);
             List<Transform> randomBricksPoints = _bricksPoints.OrderBy(_ => UnityEngine.Random.value).Take(randonPointsCount).ToList();
 
             for (int i = 0; i < randomBricksPoints.Count; i++)
@@ -129,6 +134,11 @@ public class GameplayManager : MonoBehaviour
 
     private void OnBallsFallen()
     {
+        if (!_isPaused)
+        {
+            Time.timeScale = 1f;
+        }
+
         _ballLauncher.BallsFallen -= OnBallsFallen;
 
         _ballLauncher.SpawnBall(_pickedBallsCount);
