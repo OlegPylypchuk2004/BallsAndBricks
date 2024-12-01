@@ -1,4 +1,5 @@
 using DG.Tweening;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -11,56 +12,20 @@ public class GameplayManager : MonoBehaviour
 
     private bool _isCanLaunchBalls;
     private List<Row> _rows;
-    private List<IPickupable> _pickupables;
     private int _pickedBallsCount;
     private bool _isPaused;
 
     private ObjectPool<Row> _rowsPool;
     private ObjectPool<Brick> _bricksPool;
 
-    public Row rowPrefab;
-    public Brick brickPrefab;
-
-    private void Start()
+    private IEnumerator Start()
     {
         _rows = new List<Row>();
-        _pickupables = new List<IPickupable>();
 
-        //Row rowPrefab = Resources.Load<Row>("Prefabs/Row");
-        _rowsPool = new ObjectPool<Row>(rowPrefab, 5);
+        CreatePools();
+        LoadGame();
 
-        //Brick brickPrefab = Resources.Load<Brick>("Prefabs/Row");
-        _bricksPool = new ObjectPool<Brick>(brickPrefab, 10);
-
-        GameData gameData = GameDataManager.LoadGameData();
-        RowData[] rowDatas = gameData.RowDatas.ToArray();
-
-        if (rowDatas.Length > 0)
-        {
-            foreach (RowData rowData in rowDatas)
-            {
-                Row row = _rowsPool.GetObject();
-                row.transform.position = rowData.Position;
-
-                _rows.Add(row);
-
-                foreach (BrickData brickData in rowData.BrickDatas)
-                {
-                    Brick brick = _bricksPool.GetObject();
-                    brick.transform.SetParent(row.transform);
-                    brick.transform.localPosition = new Vector2(brickData.Position.x, 0f);
-                    brick.Number = brickData.Number;
-
-                    row.AddBrick(brick);
-                }
-
-                row.AllBricksBrokeDown += OnRowsAllBricksBrokeDown;
-            }
-        }
-        else
-        {
-            SpawnRow();
-        }
+        yield return new WaitForSeconds(0f);
 
         _isCanLaunchBalls = true;
         _ballLauncher.LaunchStarted += OnLaunchStarted;
@@ -93,6 +58,15 @@ public class GameplayManager : MonoBehaviour
             GameDataManager.DeleteSave();
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
+    }
+
+    private void CreatePools()
+    {
+        Row rowPrefab = Resources.Load<Row>("Prefabs/Row");
+        _rowsPool = new ObjectPool<Row>(rowPrefab, 5);
+
+        Brick brickPrefab = Resources.Load<Brick>("Prefabs/Brick");
+        _bricksPool = new ObjectPool<Brick>(brickPrefab, 10);
     }
 
     private void SpawnRow()
@@ -140,7 +114,35 @@ public class GameplayManager : MonoBehaviour
 
     private void LoadGame()
     {
+        GameData gameData = GameDataManager.LoadGameData();
+        RowData[] rowDatas = gameData.RowDatas.ToArray();
 
+        if (rowDatas.Length > 0)
+        {
+            foreach (RowData rowData in rowDatas)
+            {
+                Row row = _rowsPool.GetObject();
+                row.transform.position = rowData.Position;
+
+                _rows.Add(row);
+
+                foreach (BrickData brickData in rowData.BrickDatas)
+                {
+                    Brick brick = _bricksPool.GetObject();
+                    brick.transform.SetParent(row.transform);
+                    brick.transform.localPosition = new Vector2(brickData.Position.x, 0f);
+                    brick.Number = brickData.Number;
+
+                    row.AddBrick(brick);
+                }
+
+                row.AllBricksBrokeDown += OnRowsAllBricksBrokeDown;
+            }
+        }
+        else
+        {
+            SpawnRow();
+        }
     }
 
     private void OnBrickBrokeDown(Brick brick)
@@ -205,15 +207,6 @@ public class GameplayManager : MonoBehaviour
                 _isCanLaunchBalls = true;
                 _ballLauncher.LaunchStarted += OnLaunchStarted;
             });
-    }
-
-    private void OnPickupableBallPicked(IPickupable pickupable)
-    {
-        pickupable.Picked -= OnPickupableBallPicked;
-        _pickupables.Remove(pickupable);
-        Destroy((pickupable as MonoBehaviour)?.gameObject);
-
-        _pickedBallsCount++;
     }
 
     private void SetPause(bool isPaused)
