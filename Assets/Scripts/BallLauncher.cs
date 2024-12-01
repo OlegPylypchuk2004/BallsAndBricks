@@ -11,6 +11,7 @@ public class BallLauncher : MonoBehaviour
     [SerializeField] private Transform _targetTransform;
     [SerializeField] private TextMeshProUGUI _ballsCountText;
 
+    private ObjectPool<Ball> _ballsPool;
     private List<Ball> _balls;
     private int _fallenBallsCount;
     private Vector2 _firstFallenBallPosition;
@@ -21,6 +22,12 @@ public class BallLauncher : MonoBehaviour
     private void Awake()
     {
         _balls = new List<Ball>();
+    }
+
+    private void Start()
+    {
+        Ball ballPrefab = Resources.Load<Ball>("Prefabs/Ball");
+        _ballsPool = new ObjectPool<Ball>(ballPrefab, 10);
     }
 
     public void Initilize()
@@ -46,7 +53,7 @@ public class BallLauncher : MonoBehaviour
     {
         for (int i = 0; i < count; i++)
         {
-            Ball ball = Instantiate(_ballPrefab);
+            Ball ball = _ballsPool.GetObject();
             _balls.Add(ball);
         }
 

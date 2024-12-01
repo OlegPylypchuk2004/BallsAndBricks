@@ -11,7 +11,6 @@ public class GameplayManager : MonoBehaviour
     [SerializeField] private BallLauncher _ballLauncher;
     [SerializeField] private PausePanel _pausePanel;
 
-    private ObjectPool<Ball> _ballsPool;
     private ObjectPool<Row> _rowsPool;
     private ObjectPool<Brick> _bricksPool;
     private ObjectPool<PickupableItem> _pickupableBallPool;
@@ -65,9 +64,6 @@ public class GameplayManager : MonoBehaviour
 
     private void CreatePools()
     {
-        Ball ballPrefab = Resources.Load<Ball>("Prefabs/Ball");
-        _ballsPool = new ObjectPool<Ball>(ballPrefab, 10);
-
         Row rowPrefab = Resources.Load<Row>("Prefabs/Row");
         _rowsPool = new ObjectPool<Row>(rowPrefab, 5);
 
