@@ -11,13 +11,13 @@ public class GameplayManager : MonoBehaviour
     [SerializeField] private BallLauncher _ballLauncher;
     [SerializeField] private PausePanel _pausePanel;
 
-    private bool _isCanLaunchBalls;
     private List<Row> _rows;
-    private int _pickedBallsCount;
-    private bool _isPaused;
-
     private ObjectPool<Row> _rowsPool;
     private ObjectPool<Brick> _bricksPool;
+
+    private bool _isCanLaunchBalls;
+    private int _pickedBallsCount;
+    private bool _isPaused;
 
     private IEnumerator Start()
     {
@@ -81,12 +81,12 @@ public class GameplayManager : MonoBehaviour
             .Take(pointsCount)
             .ToList();
 
-        foreach (var point in randomBricksPoints)
+        foreach (Transform point in randomBricksPoints)
         {
             Brick brick = _bricksPool.GetObject();
             brick.transform.SetParent(row.transform);
             brick.transform.position = point.position;
-            brick.Number = Random.Range(3, 25);
+            brick.Number =  Mathf.Clamp(ScoreManager.Instance.BrickMovesCount + Random.Range(0, 5), 1, int.MaxValue);
             brick.BrokeDown += OnBrickBrokeDown;
 
             row.AddBrick(brick);
