@@ -2,6 +2,7 @@ using DG.Tweening;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class GameplayManager : MonoBehaviour
 {
@@ -35,7 +36,7 @@ public class GameplayManager : MonoBehaviour
 
     private void Update()
     {
-        if (_isPaused)
+        if (_isPaused || IsTouchOverUI())
         {
             return;
         }
@@ -170,5 +171,26 @@ public class GameplayManager : MonoBehaviour
     {
         SetPause(false);
         _pausePanel.ContinueButtonClicked -= OnPausePanelContinueButtonClicked;
+    }
+
+    private bool IsTouchOverUI()
+    {
+        if (Input.GetMouseButton(0) && EventSystem.current.IsPointerOverGameObject())
+        {
+            return true;
+        }
+
+        if (Input.touchCount > 0)
+        {
+            foreach (Touch touch in Input.touches)
+            {
+                if (EventSystem.current.IsPointerOverGameObject(touch.fingerId))
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }
