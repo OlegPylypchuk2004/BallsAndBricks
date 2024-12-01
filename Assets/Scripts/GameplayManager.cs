@@ -14,6 +14,7 @@ public class GameplayManager : MonoBehaviour
     private List<Row> _rows;
     private ObjectPool<Row> _rowsPool;
     private ObjectPool<Brick> _bricksPool;
+    private ObjectPool<PickupableItem> _pickupableBallPool;
 
     private bool _isCanLaunchBalls;
     private int _pickedBallsCount;
@@ -68,6 +69,9 @@ public class GameplayManager : MonoBehaviour
 
         Brick brickPrefab = Resources.Load<Brick>("Prefabs/Brick");
         _bricksPool = new ObjectPool<Brick>(brickPrefab, 10);
+
+        PickupableBall pickupableBall = Resources.Load<PickupableBall>("Prefabs/PickupableBall");
+        _pickupableBallPool = new ObjectPool<PickupableItem>(pickupableBall, 5);
     }
 
     private void SpawnRow()
@@ -81,15 +85,27 @@ public class GameplayManager : MonoBehaviour
             .Take(pointsCount)
             .ToList();
 
-        foreach (Transform point in randomBricksPoints)
+        for (int i = 0; i < randomBricksPoints.Count; i++)
         {
-            Brick brick = _bricksPool.GetObject();
-            brick.transform.SetParent(row.transform);
-            brick.transform.position = point.position;
-            brick.Number =  Mathf.Clamp(ScoreManager.Instance.BrickMovesCount + Random.Range(0, 5), 1, int.MaxValue);
-            brick.BrokeDown += OnBrickBrokeDown;
+            Transform point = randomBricksPoints[i];
 
-            row.AddBrick(brick);
+            if (i == 0)
+            {
+                PickupableItem pickupableBall = _pickupableBallPool.GetObject();
+                pickupableBall.transform.SetParent(row.transform);
+                pickupableBall.transform.position = point.position;
+                pickupableBall.Picked += OnPickupableBallPicked;
+            }
+            else
+            {
+                Brick brick = _bricksPool.GetObject();
+                brick.transform.SetParent(row.transform);
+                brick.transform.position = point.position;
+                brick.Number = Mathf.Clamp(ScoreManager.Instance.BrickMovesCount + Random.Range(0, 5), 1, int.MaxValue);
+                brick.BrokeDown += OnBrickBrokeDown;
+
+                row.AddBrick(brick);
+            }
         }
 
         _rows.Add(row);
@@ -162,6 +178,14 @@ public class GameplayManager : MonoBehaviour
     private void OnRowsAllBricksBrokeDown(Row row)
     {
         _rowsPool.ReturnObject(row);
+    }
+
+    private void OnPickupableBallPicked(PickupableItem pickupableBall)
+    {
+        pickupableBall.Picked -= OnPickupableBallPicked;
+        _pickupableBallPool.ReturnObject(pickupableBall);
+
+        _pickedBallsCount++;
     }
 
     private Tween PlayMoveRowsAnimation()
