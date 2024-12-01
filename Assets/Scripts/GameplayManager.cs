@@ -11,11 +11,12 @@ public class GameplayManager : MonoBehaviour
     [SerializeField] private BallLauncher _ballLauncher;
     [SerializeField] private PausePanel _pausePanel;
 
-    private List<Row> _rows;
+    private ObjectPool<Ball> _ballsPool;
     private ObjectPool<Row> _rowsPool;
     private ObjectPool<Brick> _bricksPool;
     private ObjectPool<PickupableItem> _pickupableBallPool;
 
+    private List<Row> _rows;
     private bool _isCanLaunchBalls;
     private int _pickedBallsCount;
     private bool _isPaused;
@@ -64,6 +65,9 @@ public class GameplayManager : MonoBehaviour
 
     private void CreatePools()
     {
+        Ball ballPrefab = Resources.Load<Ball>("Prefabs/Ball");
+        _ballsPool = new ObjectPool<Ball>(ballPrefab, 10);
+
         Row rowPrefab = Resources.Load<Row>("Prefabs/Row");
         _rowsPool = new ObjectPool<Row>(rowPrefab, 5);
 
@@ -112,9 +116,18 @@ public class GameplayManager : MonoBehaviour
         row.AllBricksBrokeDown += OnRowsAllBricksBrokeDown;
     }
 
+    private void StartNewGame()
+    {
+        SpawnRow();
+
+        _ballLauncher.Initilize();
+    }
+
     private void SaveGame()
     {
         GameData gameData = new GameData();
+
+        gameData.BallsCount = _ballLauncher.BallsCount;
 
         foreach (Row row in _rows)
         {
@@ -136,6 +149,10 @@ public class GameplayManager : MonoBehaviour
     private void LoadGame()
     {
         GameData gameData = GameDataManager.LoadGameData();
+
+        _ballLauncher.SpawnBall(gameData.BallsCount);
+        _ballLauncher.Initilize();
+
         RowData[] rowDatas = gameData.RowDatas.ToArray();
 
         if (rowDatas.Length > 0)
@@ -153,6 +170,7 @@ public class GameplayManager : MonoBehaviour
                     brick.transform.SetParent(row.transform);
                     brick.transform.localPosition = new Vector2(brickData.Position.x, 0f);
                     brick.Number = brickData.Number;
+                    brick.BrokeDown += OnBrickBrokeDown;
 
                     row.AddBrick(brick);
                 }
@@ -162,9 +180,10 @@ public class GameplayManager : MonoBehaviour
         }
         else
         {
-            SpawnRow();
+            StartNewGame();
         }
     }
+
 
     private void OnBrickBrokeDown(Brick brick)
     {

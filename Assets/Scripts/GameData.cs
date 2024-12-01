@@ -4,6 +4,7 @@ using System.Collections.Generic;
 [Serializable]
 public class GameData
 {
+    public int BallsCount;
     public List<RowData> RowDatas;
 
     public GameData()

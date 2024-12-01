@@ -18,16 +18,29 @@ public class BallLauncher : MonoBehaviour
     public event Action LaunchStarted;
     public event Action BallsFallen;
 
-    private void Start()
+    private void Awake()
     {
         _balls = new List<Ball>();
+    }
 
-        SpawnBall();
-        _balls[0].transform.position = new Vector2(0f, -4.75f);
+    public void Initilize()
+    {
+        if (_balls.Count <= 0)
+        {
+            SpawnBall();
+        }
+
+        for (int i = 0; i < _balls.Count; i++)
+        {
+            _balls[i].transform.position = new Vector2(0f, -4.75f);
+        }
+
         _targetTransform.position = _balls[0].transform.position;
 
         _ballsCountText.text = $"x{_balls.Count}";
     }
+
+    public int BallsCount => _balls.Count;
 
     public void SpawnBall(int count = 1)
     {
