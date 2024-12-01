@@ -14,6 +14,7 @@ public class GameplayManager : MonoBehaviour
     private List<Brick> _bricks;
     private List<IPickupable> _pickupables;
     private int _pickedBallsCount;
+    private bool _isPaused;
 
     private void Awake()
     {
@@ -34,6 +35,11 @@ public class GameplayManager : MonoBehaviour
 
     private void Update()
     {
+        if (_isPaused)
+        {
+            return;
+        }
+
         if (_isCanLaunchBalls)
         {
             _ballLauncher.TryLaunch();
@@ -145,14 +151,24 @@ public class GameplayManager : MonoBehaviour
 
     private void SetPause(bool isPaused)
     {
+        _isPaused = isPaused;
+
         if (isPaused)
         {
             Time.timeScale = 0f;
+
             _pausePanel.Appear();
+            _pausePanel.ContinueButtonClicked += OnPausePanelContinueButtonClicked;
         }
         else
         {
             Time.timeScale = 1f;
         }
+    }
+
+    private void OnPausePanelContinueButtonClicked()
+    {
+        SetPause(false);
+        _pausePanel.ContinueButtonClicked -= OnPausePanelContinueButtonClicked;
     }
 }
