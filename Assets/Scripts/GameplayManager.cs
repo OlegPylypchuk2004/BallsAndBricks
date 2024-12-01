@@ -5,10 +5,12 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameplayManager : MonoBehaviour
 {
     [SerializeField] private BallLauncher _ballLauncher;
+    [SerializeField] private Button _pauseButton;
     [SerializeField] private PausePanel _pausePanel;
 
     private ObjectPool<Row> _rowsPool;
@@ -31,6 +33,13 @@ public class GameplayManager : MonoBehaviour
 
         _isCanLaunchBalls = true;
         _ballLauncher.LaunchStarted += OnLaunchStarted;
+
+        _pauseButton.onClick.AddListener(OnPauseButtonClicked);
+    }
+
+    private void OnDestroy()
+    {
+        _pauseButton.onClick.RemoveListener(OnPauseButtonClicked);
     }
 
     private void Update()
@@ -43,11 +52,6 @@ public class GameplayManager : MonoBehaviour
         if (_isCanLaunchBalls)
         {
             _ballLauncher.TryLaunch();
-        }
-
-        if (Input.GetKeyDown(KeyCode.Backspace))
-        {
-            SetPause(true);
         }
 
         if (Input.GetKeyDown(KeyCode.Space))
@@ -295,5 +299,10 @@ public class GameplayManager : MonoBehaviour
         }
 
         return false;
+    }
+
+    private void OnPauseButtonClicked()
+    {
+        SetPause(true);
     }
 }
