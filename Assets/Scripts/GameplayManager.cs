@@ -1,6 +1,5 @@
 using DG.Tweening;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
@@ -8,12 +7,10 @@ using UnityEngine.SceneManagement;
 public class GameplayManager : MonoBehaviour
 {
     [SerializeField] private BallLauncher _ballLauncher;
-    [SerializeField] private Transform[] _bricksPoints;
     [SerializeField] private PausePanel _pausePanel;
 
     private bool _isCanLaunchBalls;
     private ObjectPool<Brick> _bricksPool;
-    private List<Brick> _bricks;
     private List<Row> _rows;
     private List<IPickupable> _pickupables;
     private int _pickedBallsCount;
@@ -21,7 +18,6 @@ public class GameplayManager : MonoBehaviour
 
     private void Start()
     {
-        _bricks = new List<Brick>();
         _rows = new List<Row>();
         _pickupables = new List<IPickupable>();
 
@@ -64,6 +60,7 @@ public class GameplayManager : MonoBehaviour
                 Brick brick = Instantiate(brickPrefab);
                 brick.transform.localPosition = row.Points[i].position;
                 brick.Number = Random.Range(3, 25);
+                brick.BrokeDown += OnBrickBrokeDown;
 
                 row.AddBrick(brick);
             }
@@ -105,61 +102,42 @@ public class GameplayManager : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.S))
         {
-            GameData gameData = new GameData();
+            SaveGame();
+        }
+    }
 
-            foreach (Row row in _rows)
+    private void SaveGame()
+    {
+        GameData gameData = new GameData();
+
+        foreach (Row row in _rows)
+        {
+            List<BrickData> brickDatas = new List<BrickData>();
+
+            for (int i = 0; i < row.Bricks.Length; i++)
             {
-                List<BrickData> brickDatas = new List<BrickData>();
-
-                for (int i = 0; i < row.Bricks.Length; i++)
-                {
-                    BrickData brickData = new BrickData(row.Bricks[i].Number, row.Bricks[i].transform.localPosition);
-                    brickDatas.Add(brickData);
-                }
-
-                RowData rowData = new RowData(row.transform.position, brickDatas.ToArray());
-                gameData.SaveRow(rowData);
+                BrickData brickData = new BrickData(row.Bricks[i].Number, row.Bricks[i].transform.localPosition);
+                brickDatas.Add(brickData);
             }
 
-            GameDataManager.SaveGameData(gameData);
+            RowData rowData = new RowData(row.transform.position, brickDatas.ToArray());
+            gameData.SaveRow(rowData);
         }
+
+        GameDataManager.SaveGameData(gameData);
     }
 
     private void SpawnBricks()
     {
         MoveRowsAnimation().OnComplete(() =>
         {
-            int randonPointsCount = UnityEngine.Random.Range(5, _bricksPoints.Length);
-            List<Transform> randomBricksPoints = _bricksPoints.OrderBy(_ => UnityEngine.Random.value).Take(randonPointsCount).ToList();
 
-            for (int i = 0; i < randomBricksPoints.Count; i++)
-            {
-                if (i == 0)
-                {
-                    PickupableBall pickupableBall = Instantiate(Resources.Load<PickupableBall>("Prefabs/PickupableBall"));
-                    pickupableBall.transform.position = randomBricksPoints[i].position;
-                    pickupableBall.Picked += OnPickupableBallPicked;
-
-                    _pickupables.Add(pickupableBall);
-                }
-                else
-                {
-                    Brick brick = _bricksPool.GetObject();
-                    //brick.RandomInit();
-                    brick.transform.position = randomBricksPoints[i].position;
-                    brick.Destroyed += OnBrickDestroyed;
-
-                    _bricks.Add(brick);
-                }
-            }
         });
     }
 
-    private void OnBrickDestroyed(Brick brick)
+    private void OnBrickBrokeDown(Brick brick)
     {
-        brick.Destroyed -= OnBrickDestroyed;
-        _bricks.Remove(brick);
-        _bricksPool.ReturnObject(brick);
+        brick.BrokeDown -= OnBrickBrokeDown;
 
         ScoreManager.Instance.AddBrickDestroyCount();
     }
@@ -168,27 +146,27 @@ public class GameplayManager : MonoBehaviour
     {
         Sequence moveBricksSequence = DOTween.Sequence();
 
-        foreach (Brick brick in _bricks)
-        {
-            Vector3 targetPosition = brick.transform.position;
-            targetPosition.y -= 1;
+        //foreach (Brick brick in _bricks)
+        //{
+        //    Vector3 targetPosition = brick.transform.position;
+        //    targetPosition.y -= 1;
 
-            moveBricksSequence.Join
-                (brick.transform.DOMove(targetPosition, 0.25f)
-                .SetEase(Ease.Linear));
-        }
+        //    moveBricksSequence.Join
+        //        (brick.transform.DOMove(targetPosition, 0.25f)
+        //        .SetEase(Ease.Linear));
+        //}
 
-        foreach (IPickupable pickupable in _pickupables)
-        {
-            Transform pickupableTransform = (pickupable as MonoBehaviour).transform;
+        //foreach (IPickupable pickupable in _pickupables)
+        //{
+        //    Transform pickupableTransform = (pickupable as MonoBehaviour).transform;
 
-            Vector3 targetPosition = pickupableTransform.position;
-            targetPosition.y -= 1;
+        //    Vector3 targetPosition = pickupableTransform.position;
+        //    targetPosition.y -= 1;
 
-            moveBricksSequence.Join
-                (pickupableTransform.DOMove(targetPosition, 0.25f)
-                .SetEase(Ease.Linear));
-        }
+        //    moveBricksSequence.Join
+        //        (pickupableTransform.DOMove(targetPosition, 0.25f)
+        //        .SetEase(Ease.Linear));
+        //}
 
         return moveBricksSequence;
     }

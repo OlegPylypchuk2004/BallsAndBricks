@@ -18,5 +18,12 @@ public class Row : MonoBehaviour
     public void AddBrick(Brick brick)
     {
         _bricks.Add(brick);
+        brick.BrokeDown += OnBrickBrokeDown;
+    }
+
+    private void OnBrickBrokeDown(Brick brick)
+    {
+        _bricks.Remove(brick);
+        brick.BrokeDown -= OnBrickBrokeDown;
     }
 }
