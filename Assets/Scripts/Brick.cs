@@ -14,19 +14,24 @@ public class Brick : MonoBehaviour
 
     public event Action<Brick> Destroyed;
 
-    public void LoadData(BrickData brickData)
+    //public void LoadData(BrickData brickData)
+    //{
+    //    transform.position = brickData.Position;
+    //    _number = brickData.Number;
+
+    //    UP();
+    //}
+
+    //public void RandomInit()
+    //{
+    //    _number = Mathf.Clamp(ScoreManager.Instance.BrickMovesCount + UnityEngine.Random.Range(0, 5), 1, int.MaxValue);
+
+    //    UP();
+    //}
+
+    private void Update()
     {
-        transform.position = brickData.Position;
-        _number = brickData.Number;
-
-        UP();
-    }
-
-    public void RandomInit()
-    {
-        _number = Mathf.Clamp(ScoreManager.Instance.BrickMovesCount + UnityEngine.Random.Range(0, 5), 1, int.MaxValue);
-
-        UP();
+        //UP();
     }
 
     private void UP()
@@ -44,6 +49,7 @@ public class Brick : MonoBehaviour
     public int Number
     {
         get { return _number; }
+        set { _number = value; UpdateColor(); }
     }
 
     public void Hit()
