@@ -6,6 +6,8 @@ using UnityEngine;
 public class Brick : MonoBehaviour
 {
     [SerializeField] private TextMeshPro _numberText;
+    [SerializeField] private SpriteRenderer _spriteRenderer;
+    [SerializeField] private Gradient _colorGradient;
 
     private int _number;
     private Tween _textAnimation;
@@ -22,6 +24,8 @@ public class Brick : MonoBehaviour
             .SetAutoKill(false)
             .SetLink(gameObject)
             .Pause();
+
+        UpdateColor();
     }
 
     public void Hit()
@@ -35,11 +39,18 @@ public class Brick : MonoBehaviour
 
         UpdateView();
         PlayTextAnimation();
+        UpdateColor();
     }
 
     private void UpdateView()
     {
         _numberText.text = $"{_number}";
+    }
+
+    private void UpdateColor()
+    {
+        float t = Mathf.Clamp01((float)_number / 50);
+        _spriteRenderer.color = _colorGradient.Evaluate(t);
     }
 
     private void PlayTextAnimation()
