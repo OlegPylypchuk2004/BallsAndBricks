@@ -8,13 +8,13 @@ public class BlurController : MonoBehaviour
 
     public Tween Appear()
     {
-        return DOTween.To(() => _blur.Intensity, x => _blur.Intensity = x, 1f, 0.25f)
+        return DOTween.To(() => _blur.Intensity, x => _blur.Intensity = x, 1f, 0.125f)
              .SetEase(Ease.OutQuad);
     }
 
     public Tween Disappear()
     {
-        return DOTween.To(() => _blur.Intensity, x => _blur.Intensity = x, 0f, 0.25f)
+        return DOTween.To(() => _blur.Intensity, x => _blur.Intensity = x, 0f, 0.125f)
             .SetEase(Ease.InQuad);
     }
 

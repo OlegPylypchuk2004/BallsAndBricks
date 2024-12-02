@@ -1129,12 +1129,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0af296e74e1018945aac1be76bb96e01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _gameplayManager: {fileID: 2101977873}
   _blurController: {fileID: 1888847468}
   _panelRectTransform: {fileID: 1856062536}
   _canvasGroup: {fileID: 1856062539}
   _continueButton: {fileID: 1083024592}
   _restartButton: {fileID: 1390340978}
   _menuButton: {fileID: 1150864022}
+  _closeButton: {fileID: 463353840}
 --- !u!1 &463353836
 GameObject:
   m_ObjectHideFlags: 0

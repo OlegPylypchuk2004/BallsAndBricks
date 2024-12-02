@@ -278,7 +278,7 @@ public class GameplayManager : MonoBehaviour
         return false;
     }
 
-    private void SetPause(bool isPaused)
+    public void SetPause(bool isPaused)
     {
         _isPaused = isPaused;
 
@@ -287,18 +287,11 @@ public class GameplayManager : MonoBehaviour
             Time.timeScale = 0f;
 
             _pausePanel.Appear();
-            _pausePanel.ContinueButtonClicked += OnPausePanelContinueButtonClicked;
         }
         else
         {
             Time.timeScale = 1f;
         }
-    }
-
-    private void OnPausePanelContinueButtonClicked()
-    {
-        SetPause(false);
-        _pausePanel.ContinueButtonClicked -= OnPausePanelContinueButtonClicked;
     }
 
     private bool IsTouchOverUI()
