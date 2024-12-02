@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -137,10 +138,18 @@ public class BallLauncher : MonoBehaviour
         ball.Fallen -= OnBallFallen;
 
         _fallenBallsCount++;
+        Sequence resetBallsSequence = DOTween.Sequence();
 
         if (_balls[0] == ball)
         {
             _firstFallenBallPosition = position;
+        }
+        else
+        {
+            resetBallsSequence.Join
+                (ball.transform.DOMove(_balls[0].transform.position, 0.125f)
+                    .SetEase(Ease.Linear)
+                    .SetLink(gameObject));
         }
 
         if (_fallenBallsCount >= _balls.Count)
@@ -148,7 +157,10 @@ public class BallLauncher : MonoBehaviour
             _fallenBallsCount = 0;
             _target.transform.position = _balls[0].transform.position;
 
-            BallsFallen?.Invoke();
+            resetBallsSequence.OnKill(() =>
+            {
+                BallsFallen?.Invoke();
+            });
         }
     }
 
