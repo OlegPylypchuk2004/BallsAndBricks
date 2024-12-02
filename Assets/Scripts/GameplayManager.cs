@@ -249,12 +249,32 @@ public class GameplayManager : MonoBehaviour
         PlayMoveRowsAnimation()
             .OnComplete(() =>
             {
-                SpawnRow();
-                SaveGame();
+                if (IsLosed())
+                {
 
-                _isCanLaunchBalls = true;
-                _ballLauncher.LaunchStarted += OnLaunchStarted;
+                }
+                else
+                {
+                    SpawnRow();
+                    SaveGame();
+
+                    _isCanLaunchBalls = true;
+                    _ballLauncher.LaunchStarted += OnLaunchStarted;
+                }
             });
+    }
+
+    private bool IsLosed()
+    {
+        foreach (Row row in _rows)
+        {
+            if (row.transform.position.y <= -3.5f)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void SetPause(bool isPaused)
