@@ -1,11 +1,12 @@
 using DG.Tweening;
+using Krivodeling.UI.Effects;
 using System;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class PausePanel : MonoBehaviour
 {
-    [SerializeField] private Image _fadeImage;
+    [SerializeField] private BlurController _blurController;
     [SerializeField] private RectTransform _panelRectTransform;
     [SerializeField] private CanvasGroup _canvasGroup;
     [SerializeField] private Button _menuButton;
@@ -18,7 +19,7 @@ public class PausePanel : MonoBehaviour
     {
         gameObject.SetActive(true);
         _canvasGroup.interactable = false;
-        _fadeImage.color = new Color(_fadeImage.color.r, _fadeImage.color.g, _fadeImage.color.b, 0f);
+        _blurController.Intensity = 0f;
 
         Sequence appearSequence = DOTween.Sequence();
 
@@ -28,9 +29,7 @@ public class PausePanel : MonoBehaviour
             .SetEase(Ease.OutBack));
 
         appearSequence.Join
-            (_fadeImage.DOFade(0.95f, 0.25f)
-            .From(0f)
-            .SetEase(Ease.OutQuad));
+            (_blurController.Appear());
 
         appearSequence.SetUpdate(true);
         appearSequence.SetLink(gameObject);
@@ -50,12 +49,11 @@ public class PausePanel : MonoBehaviour
         Sequence disappearSequence = DOTween.Sequence();
 
         disappearSequence.Append
-            (_fadeImage.DOFade(0f, 0.25f)
+            (_panelRectTransform.DOScale(0f, 0.25f)
             .SetEase(Ease.InQuad));
 
         disappearSequence.Join
-            (_panelRectTransform.DOScale(0f, 0.25f)
-            .SetEase(Ease.InQuad));
+            (_blurController.Disappear());
 
         disappearSequence.SetUpdate(true);
         disappearSequence.SetLink(gameObject);

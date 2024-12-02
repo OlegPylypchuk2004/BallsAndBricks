@@ -110,6 +110,11 @@ namespace Krivodeling.UI.Effects
 
         private void UpdateIntensity()
         {
+            if (_material == null)
+            {
+                _material = GetComponent<Image>().material;
+            }
+
             _material.SetFloat(_intensityId, Intensity);
         }
 
