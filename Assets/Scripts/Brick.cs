@@ -6,7 +6,8 @@ using UnityEngine;
 public class Brick : MonoBehaviour
 {
     [SerializeField] private TextMeshPro _numberText;
-    [SerializeField] private SpriteRenderer _spriteRenderer;
+    [SerializeField] private SpriteRenderer _backgroundSpriteRenderer;
+    [SerializeField] private SpriteRenderer _gradientMaskSpriteRenderer;
     [SerializeField] private Gradient _colorGradient;
 
     private int _number;
@@ -60,7 +61,9 @@ public class Brick : MonoBehaviour
     private void UpdateColor()
     {
         float t = Mathf.Clamp01((float)_number / 50);
-        _spriteRenderer.color = _colorGradient.Evaluate(t);
+        _backgroundSpriteRenderer.color = _colorGradient.Evaluate(t);
+
+        _gradientMaskSpriteRenderer.color = Color.Lerp(_backgroundSpriteRenderer.color, Color.black, 0.15f);
     }
 
     private void PlayTextAnimation()
