@@ -38,6 +38,9 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: Brick
+    uniqueID: 3147788313
+    locked: 0
   - name: Default
     uniqueID: 0
     locked: 0
