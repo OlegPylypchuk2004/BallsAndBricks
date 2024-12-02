@@ -10,7 +10,7 @@ public class BallLauncher : MonoBehaviour
     [SerializeField] private Ball _ballPrefab;
     [SerializeField] private Camera _camera;
     [SerializeField] private Target _target;
-    [SerializeField] private TextMeshProUGUI _ballsCountText;
+    [SerializeField] private TextMeshPro _ballsCountText;
 
     private ObjectPool<Ball> _ballsPool;
     private List<Ball> _balls;
@@ -46,6 +46,7 @@ public class BallLauncher : MonoBehaviour
         _target.transform.position = _balls[0].transform.position;
 
         _ballsCountText.text = $"x{_balls.Count}";
+        _ballsCountText.transform.position = new Vector2(_balls[0].transform.position.x, _ballsCountText.transform.position.y);
     }
 
     public int BallsCount => _balls.Count;
@@ -156,10 +157,11 @@ public class BallLauncher : MonoBehaviour
         if (_fallenBallsCount >= _balls.Count)
         {
             _fallenBallsCount = 0;
-            _target.transform.position = _balls[0].transform.position;
 
             resetBallsSequence.OnKill(() =>
             {
+                _target.transform.position = _balls[0].transform.position;
+
                 BallsFallen?.Invoke();
             });
         }
@@ -167,16 +169,20 @@ public class BallLauncher : MonoBehaviour
 
     private void ResetBalls()
     {
-        for (int i = 0; i < _balls.Count; i++)
+        if (_balls.Count > 0)
         {
-            if (i != 0)
+            for (int i = 0; i < _balls.Count; i++)
             {
-                _balls[i].gameObject.SetActive(false);
+                if (i != 0)
+                {
+                    _balls[i].gameObject.SetActive(false);
+                }
+
+                _balls[i].transform.position = _firstFallenBallPosition;
             }
 
-            _balls[i].transform.position = _firstFallenBallPosition;
+            _ballsCountText.text = $"x{_balls.Count}";
+            _ballsCountText.transform.position = new Vector2(_balls[0].transform.position.x, _ballsCountText.transform.position.y);
         }
-
-        _ballsCountText.text = $"x{_balls.Count}";
     }
 }
