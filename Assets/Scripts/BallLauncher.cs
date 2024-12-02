@@ -11,6 +11,7 @@ public class BallLauncher : MonoBehaviour
     [SerializeField] private Transform _targetTransform;
     [SerializeField] private TextMeshProUGUI _ballsCountText;
 
+    private ObjectPool<Ball> _ballsPool;
     private List<Ball> _balls;
     private int _fallenBallsCount;
     private Vector2 _firstFallenBallPosition;
@@ -18,22 +19,41 @@ public class BallLauncher : MonoBehaviour
     public event Action LaunchStarted;
     public event Action BallsFallen;
 
-    private void Start()
+    private void Awake()
     {
         _balls = new List<Ball>();
+    }
 
-        SpawnBall();
-        _balls[0].transform.position = new Vector2(0f, -4.75f);
+    private void Start()
+    {
+        Ball ballPrefab = Resources.Load<Ball>("Prefabs/Ball");
+        _ballsPool = new ObjectPool<Ball>(ballPrefab, 10);
+    }
+
+    public void Initilize()
+    {
+        if (_balls.Count <= 0)
+        {
+            SpawnBall();
+        }
+
+        for (int i = 0; i < _balls.Count; i++)
+        {
+            _balls[i].transform.position = new Vector2(0f, -4.75f);
+        }
+
         _targetTransform.position = _balls[0].transform.position;
 
         _ballsCountText.text = $"x{_balls.Count}";
     }
 
+    public int BallsCount => _balls.Count;
+
     public void SpawnBall(int count = 1)
     {
         for (int i = 0; i < count; i++)
         {
-            Ball ball = Instantiate(_ballPrefab);
+            Ball ball = _ballsPool.GetObject();
             _balls.Add(ball);
         }
 

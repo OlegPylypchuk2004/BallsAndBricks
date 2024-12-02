@@ -1,15 +1,19 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 [Serializable]
 public class GameData
 {
-    public List<BrickData> BrickDatas = new List<BrickData>();
+    public int BallsCount;
+    public List<RowData> RowDatas;
 
-    public void SaveBrick(int brickValue, Vector2 position)
+    public GameData()
     {
-        BrickData brickData = new BrickData(brickValue, position);
-        BrickDatas.Add(brickData);
+        RowDatas = new List<RowData>();
+    }
+
+    public void SaveRow(RowData rowData)
+    {
+        RowDatas.Add(rowData);
     }
 }

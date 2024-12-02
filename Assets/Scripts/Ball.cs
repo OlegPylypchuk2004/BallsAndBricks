@@ -26,7 +26,7 @@ public class Ball : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.TryGetComponent(out IPickupable pickupable))
+        if (collision.TryGetComponent(out PickupableItem pickupable))
         {
             pickupable.Pickup();
         }

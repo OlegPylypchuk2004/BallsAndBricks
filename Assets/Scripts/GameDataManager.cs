@@ -9,6 +9,7 @@ public static class GameDataManager
     {
         string json = JsonUtility.ToJson(gameData, true);
         File.WriteAllText(SavePath, json);
+
         Debug.Log($"Game data saved to {SavePath}");
     }
 
@@ -16,13 +17,16 @@ public static class GameDataManager
     {
         if (!File.Exists(SavePath))
         {
-            Debug.LogWarning("Save file not found. Returning new GameData instance.");
+            Debug.Log("Save file not found. New game started");
+
             return new GameData();
         }
 
         string json = File.ReadAllText(SavePath);
         GameData gameData = JsonUtility.FromJson<GameData>(json);
-        Debug.Log("Game data loaded successfully.");
+
+        Debug.Log("Game data loaded successfully");
+
         return gameData;
     }
 
@@ -31,11 +35,12 @@ public static class GameDataManager
         if (File.Exists(SavePath))
         {
             File.Delete(SavePath);
-            Debug.Log("Save file deleted.");
+
+            Debug.Log("Save file deleted");
         }
         else
         {
-            Debug.LogWarning("No save file to delete.");
+            Debug.Log("No save file to delete");
         }
     }
 }

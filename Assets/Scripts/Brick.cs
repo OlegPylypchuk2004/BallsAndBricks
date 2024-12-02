@@ -6,44 +6,36 @@ using UnityEngine;
 public class Brick : MonoBehaviour
 {
     [SerializeField] private TextMeshPro _numberText;
-    [SerializeField] private SpriteRenderer _spriteRenderer;
+    [SerializeField] private SpriteRenderer _backgroundSpriteRenderer;
+    [SerializeField] private SpriteRenderer _gradientMaskSpriteRenderer;
     [SerializeField] private Gradient _colorGradient;
 
     private int _number;
     private Tween _textAnimation;
 
-    public event Action<Brick> Destroyed;
+    public event Action<Brick> BrokeDown;
 
-    public void LoadData(BrickData brickData)
+    private void Awake()
     {
-        transform.position = brickData.Position;
-        _number = brickData.Number;
-
-        UP();
-    }
-
-    public void RandomInit()
-    {
-        _number = Mathf.Clamp(ScoreManager.Instance.BrickMovesCount + UnityEngine.Random.Range(0, 5), 1, int.MaxValue);
-
-        UP();
-    }
-
-    private void UP()
-    {
-        _numberText.text = $"{_number}";
-
         _textAnimation = _numberText.transform.DOPunchScale(Vector3.one * 0.5f, 0.25f)
             .SetAutoKill(false)
             .SetLink(gameObject)
             .Pause();
-
-        UpdateColor();
     }
 
     public int Number
     {
-        get { return _number; }
+        get 
+        { 
+            return _number; 
+        }
+        set 
+        { 
+            _number = value;
+
+            UpdateText();
+            UpdateColor(); 
+        }
     }
 
     public void Hit()
@@ -52,23 +44,26 @@ public class Brick : MonoBehaviour
 
         if (_number <= 0)
         {
-            Destroyed?.Invoke(this);
+            BrokeDown?.Invoke(this);
         }
 
-        UpdateView();
+        UpdateText();
         PlayTextAnimation();
-        UpdateColor();
     }
 
-    private void UpdateView()
+    private void UpdateText()
     {
         _numberText.text = $"{_number}";
+
+        UpdateColor();
     }
 
     private void UpdateColor()
     {
         float t = Mathf.Clamp01((float)_number / 50);
-        _spriteRenderer.color = _colorGradient.Evaluate(t);
+        _backgroundSpriteRenderer.color = _colorGradient.Evaluate(t);
+
+        _gradientMaskSpriteRenderer.color = Color.Lerp(_backgroundSpriteRenderer.color, Color.black, 0.15f);
     }
 
     private void PlayTextAnimation()

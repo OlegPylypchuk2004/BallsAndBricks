@@ -7,9 +7,9 @@ public struct BrickData
     public int Number;
     public Vector2 Position;
 
-    public BrickData(int brickValue, Vector2 position)
+    public BrickData(int number, Vector2 position)
     {
-        Number = brickValue;
+        Number = number;
         Position = position;
     }
 }
