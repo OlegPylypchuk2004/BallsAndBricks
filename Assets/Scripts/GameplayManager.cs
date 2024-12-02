@@ -196,6 +196,7 @@ public class GameplayManager : MonoBehaviour
 
     private void OnRowsAllBricksBrokeDown(Row row)
     {
+        _rows.Remove(row);
         _rowsPool.ReturnObject(row);
     }
 

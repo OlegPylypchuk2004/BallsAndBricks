@@ -8,7 +8,7 @@ public class BallLauncher : MonoBehaviour
 {
     [SerializeField] private Ball _ballPrefab;
     [SerializeField] private Camera _camera;
-    [SerializeField] private Transform _targetTransform;
+    [SerializeField] private Target _target;
     [SerializeField] private TextMeshProUGUI _ballsCountText;
 
     private ObjectPool<Ball> _ballsPool;
@@ -42,7 +42,7 @@ public class BallLauncher : MonoBehaviour
             _balls[i].transform.position = new Vector2(0f, -4.75f);
         }
 
-        _targetTransform.position = _balls[0].transform.position;
+        _target.transform.position = _balls[0].transform.position;
 
         _ballsCountText.text = $"x{_balls.Count}";
     }
@@ -66,18 +66,18 @@ public class BallLauncher : MonoBehaviour
 
         if (direction.y > 0)
         {
-            _targetTransform.gameObject.SetActive(true);
+            _target.gameObject.SetActive(true);
 
             if (Input.GetMouseButton(0))
             {
                 Debug.DrawRay(_balls[0].transform.position, direction);
 
                 float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-                _targetTransform.rotation = Quaternion.Euler(0, 0, angle - 90f);
+                _target.transform.rotation = Quaternion.Euler(0, 0, angle - 90f);
             }
             else
             {
-                _targetTransform.gameObject.SetActive(false);
+                _target.gameObject.SetActive(false);
             }
 
             if (Input.GetMouseButtonUp(0))
@@ -89,7 +89,7 @@ public class BallLauncher : MonoBehaviour
         }
         else
         {
-            _targetTransform.gameObject.SetActive(false);
+            _target.gameObject.SetActive(false);
         }
     }
 
@@ -146,7 +146,7 @@ public class BallLauncher : MonoBehaviour
         if (_fallenBallsCount >= _balls.Count)
         {
             _fallenBallsCount = 0;
-            _targetTransform.position = _balls[0].transform.position;
+            _target.transform.position = _balls[0].transform.position;
 
             BallsFallen?.Invoke();
         }

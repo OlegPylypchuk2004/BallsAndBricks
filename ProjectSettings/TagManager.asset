@@ -13,7 +13,7 @@ TagManager:
   - UI
   - 
   - Ball
-  - 
+  - PickableItem
   - 
   - 
   - 
@@ -40,6 +40,9 @@ TagManager:
   m_SortingLayers:
   - name: Brick
     uniqueID: 3147788313
+    locked: 0
+  - name: Target
+    uniqueID: 3183874899
     locked: 0
   - name: Default
     uniqueID: 0
