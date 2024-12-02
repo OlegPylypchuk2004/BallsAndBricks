@@ -140,14 +140,14 @@ public class BallLauncher : MonoBehaviour
         _fallenBallsCount++;
         Sequence resetBallsSequence = DOTween.Sequence();
 
-        if (_balls[0] == ball)
+        if (_fallenBallsCount == 1)
         {
             _firstFallenBallPosition = position;
         }
         else
         {
             resetBallsSequence.Join
-                (ball.transform.DOMove(_balls[0].transform.position, 0.125f)
+                (ball.transform.DOMove(_firstFallenBallPosition, 0.125f)
                     .SetEase(Ease.Linear)
                     .SetLink(gameObject));
         }
