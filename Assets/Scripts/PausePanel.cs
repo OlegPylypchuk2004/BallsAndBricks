@@ -1,5 +1,4 @@
 using DG.Tweening;
-using Krivodeling.UI.Effects;
 using System;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,9 +8,9 @@ public class PausePanel : MonoBehaviour
     [SerializeField] private BlurController _blurController;
     [SerializeField] private RectTransform _panelRectTransform;
     [SerializeField] private CanvasGroup _canvasGroup;
-    [SerializeField] private Button _menuButton;
     [SerializeField] private Button _continueButton;
     [SerializeField] private Button _restartButton;
+    [SerializeField] private Button _menuButton;
 
     public event Action ContinueButtonClicked;
 
