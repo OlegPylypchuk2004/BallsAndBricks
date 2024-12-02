@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class GameData
 {
     public int BallsCount;
+    public float HorizontalBallsPosition;
     public List<RowData> RowDatas;
 
     public GameData()

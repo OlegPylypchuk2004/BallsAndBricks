@@ -128,6 +128,7 @@ public class GameplayManager : MonoBehaviour
         GameData gameData = new GameData();
 
         gameData.BallsCount = _ballLauncher.BallsCount;
+        gameData.HorizontalBallsPosition = _ballLauncher.HorizontalBallsPosition;
 
         foreach (Row row in _rows)
         {
@@ -151,7 +152,7 @@ public class GameplayManager : MonoBehaviour
         GameData gameData = GameDataManager.LoadGameData();
 
         _ballLauncher.SpawnBall(gameData.BallsCount);
-        _ballLauncher.Initilize();
+        _ballLauncher.Initilize(gameData.HorizontalBallsPosition);
 
         RowData[] rowDatas = gameData.RowDatas.ToArray();
 

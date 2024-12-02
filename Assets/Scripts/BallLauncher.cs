@@ -31,7 +31,7 @@ public class BallLauncher : MonoBehaviour
         _ballsPool = new ObjectPool<Ball>(ballPrefab, 10);
     }
 
-    public void Initilize()
+    public void Initilize(float horizontalBallsPosition = 0f)
     {
         if (_balls.Count <= 0)
         {
@@ -40,7 +40,7 @@ public class BallLauncher : MonoBehaviour
 
         for (int i = 0; i < _balls.Count; i++)
         {
-            _balls[i].transform.position = new Vector2(0f, -4.75f);
+            _balls[i].transform.position = new Vector2(horizontalBallsPosition, -4.75f);
         }
 
         _target.transform.position = _balls[0].transform.position;
@@ -49,6 +49,7 @@ public class BallLauncher : MonoBehaviour
     }
 
     public int BallsCount => _balls.Count;
+    public float HorizontalBallsPosition => _balls[0].transform.position.x;
 
     public void SpawnBall(int count = 1)
     {
