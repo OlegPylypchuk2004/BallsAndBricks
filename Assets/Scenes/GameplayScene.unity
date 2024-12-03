@@ -4791,6 +4791,7 @@ MonoBehaviour:
   _camera: {fileID: 519420031}
   _target: {fileID: 1027167249}
   _ballsCountText: {fileID: 331165369}
+  _inputType: 1
 --- !u!4 &1356693117
 Transform:
   m_ObjectHideFlags: 0

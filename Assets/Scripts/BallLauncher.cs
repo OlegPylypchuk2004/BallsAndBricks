@@ -11,11 +11,14 @@ public class BallLauncher : MonoBehaviour
     [SerializeField] private Camera _camera;
     [SerializeField] private Target _target;
     [SerializeField] private TextMeshPro _ballsCountText;
+    [SerializeField] private InputType _inputType;
 
     private ObjectPool<Ball> _ballsPool;
     private List<Ball> _balls;
     private int _fallenBallsCount;
     private Vector2 _firstFallenBallPosition;
+    private Vector2 _tapPosition;
+    private Vector2 _launchDirection;
 
     public event Action LaunchStarted;
     public event Action BallsFallen;
@@ -65,6 +68,11 @@ public class BallLauncher : MonoBehaviour
 
     public void TryLaunch()
     {
+        if (Input.GetMouseButtonDown(0))
+        {
+            _tapPosition = GetMouseWorldPosition();
+        }
+
         Vector2 direction = GetDirection();
 
         if (direction.y > 0)
@@ -98,7 +106,23 @@ public class BallLauncher : MonoBehaviour
 
     private Vector2 GetDirection()
     {
-        Vector2 direction = GetMouseWorldPosition() - (Vector2)_balls[0].transform.position;
+        Vector2 direction = Vector2.zero;
+
+        switch (_inputType)
+        {
+            case InputType.Classic:
+                direction = GetMouseWorldPosition() - (Vector2)_balls[0].transform.position;
+                break;
+
+            case InputType.Inverted:
+                direction = _tapPosition - GetMouseWorldPosition();
+                break;
+
+            default:
+                direction = GetMouseWorldPosition() - (Vector2)_balls[0].transform.position;
+                break;
+        }
+
         direction = direction.normalized;
 
         return direction;
