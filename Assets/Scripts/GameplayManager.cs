@@ -25,14 +25,12 @@ public class GameplayManager : MonoBehaviour
     private int _pickedBallsCount;
     private bool _isPaused;
 
-    private IEnumerator Start()
+    private void Start()
     {
         _rows = new List<Row>();
 
         CreatePools();
         LoadGame();
-
-        yield return new WaitForSeconds(0f);
 
         _isCanLaunchBalls = true;
         _ballLauncher.LaunchStarted += OnLaunchStarted;
@@ -197,7 +195,8 @@ public class GameplayManager : MonoBehaviour
 
     public void GoToMenu()
     {
-
+        Time.timeScale = 1f;
+        _sceneChanger.LoadByName("MenuScene");
     }
 
     private void OnBrickBrokeDown(Brick brick)
@@ -352,7 +351,7 @@ public class GameplayManager : MonoBehaviour
 
     private IEnumerator ShowSpeedUpButton()
     {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(3f);
 
         _speedUpButton.gameObject.SetActive(true);
         _speedUpButton.onClick.AddListener(OnSpeedUpButtonClicked);
