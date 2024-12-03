@@ -9,10 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4492837007935523057}
-  - component: {fileID: 5467178979576908075}
-  - component: {fileID: 7426637658966492309}
+  - component: {fileID: 8169875775489423496}
   m_Layer: 8
-  m_Name: PickupableBall
+  m_Name: PickupableBallPickedAnimation
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -35,42 +34,7 @@ Transform:
   - {fileID: 2908439625446496081}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!58 &5467178979576908075
-CircleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4957752751822916336}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 1
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  serializedVersion: 2
-  m_Radius: 0.5
---- !u!114 &7426637658966492309
+--- !u!114 &8169875775489423496
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -79,12 +43,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 4957752751822916336}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aaaff470a4844d848ab2b8212d755305, type: 3}
+  m_Script: {fileID: 11500000, guid: a1b732393128dc340b7694a6b3e12cb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _outlineSpriteRenderer: {fileID: 3821757223072980431}
   _circleTransform: {fileID: 8651765747244952862}
-  _pickedAnimationPrefab: {fileID: 8169875775489423496, guid: 078e7c74a6450ce4293a16a4db1df635, type: 3}
+  _pickedAnimationPrefab: {fileID: 0}
 --- !u!1 &5404114854624476127
 GameObject:
   m_ObjectHideFlags: 0

@@ -5,6 +5,7 @@ public class PickupableBall : PickupableItem
 {
     [SerializeField] private SpriteRenderer _outlineSpriteRenderer;
     [SerializeField] private Transform _circleTransform;
+    [SerializeField] private PickupableBallPickedAnimation _pickedAnimationPrefab;
 
     private void OnEnable()
     {
@@ -21,6 +22,15 @@ public class PickupableBall : PickupableItem
 
     private void Update()
     {
-        transform.Rotate(0f, 0f, -180f * Time.deltaTime);
+        _outlineSpriteRenderer.transform.Rotate(0f, 0f, -180f * Time.deltaTime);
+    }
+
+    public override void Pickup()
+    {
+        PickupableBallPickedAnimation pickedAnimation = Instantiate(_pickedAnimationPrefab);
+        pickedAnimation.transform.position = transform.position;
+        pickedAnimation.SetOutlineRotation(_outlineSpriteRenderer.transform.eulerAngles);
+
+        base.Pickup();
     }
 }
