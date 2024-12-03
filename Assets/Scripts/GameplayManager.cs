@@ -58,12 +58,6 @@ public class GameplayManager : MonoBehaviour
         {
             Time.timeScale = 2f;
         }
-
-        if (Input.GetKeyDown(KeyCode.D))
-        {
-            GameDataManager.DeleteSave();
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-        }
     }
 
     private void CreatePools()
@@ -189,6 +183,16 @@ public class GameplayManager : MonoBehaviour
         }
     }
 
+    public void RestartGame()
+    {
+        GameDataManager.DeleteSave();
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    public void GoToMenu()
+    {
+
+    }
 
     private void OnBrickBrokeDown(Brick brick)
     {

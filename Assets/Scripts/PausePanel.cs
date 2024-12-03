@@ -4,11 +4,12 @@ using UnityEngine.UI;
 
 public class PausePanel : Panel
 {
-    [SerializeField] private GameplayManager _gameplayManager;
     [SerializeField] private Button _continueButton;
     [SerializeField] private Button _restartButton;
     [SerializeField] private Button _menuButton;
     [SerializeField] private Button _closeButton;
+    [SerializeField] private GameplayManager _gameplayManager;
+    [SerializeField] private ConfirmPanel _confirmPanel;
 
     protected override void SubscribeOnEvents()
     {
@@ -40,12 +41,25 @@ public class PausePanel : Panel
 
     private void OnRestartButtonClicked()
     {
-
+        Disappear().OnComplete(() =>
+        {
+            if (ScoreManager.Instance.BrickMovesCount > 0)
+            {
+                _confirmPanel.Appear();
+            }
+            else
+            {
+                _gameplayManager.RestartGame();
+            }
+        });
     }
 
     private void OnMenuButtonClicked()
     {
-
+        Disappear().OnComplete(() =>
+        {
+            _gameplayManager.GoToMenu();
+        });
     }
 
     private void OnCloseButtonClicked()
