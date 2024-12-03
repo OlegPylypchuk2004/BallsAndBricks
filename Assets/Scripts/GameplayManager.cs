@@ -11,6 +11,7 @@ public class GameplayManager : MonoBehaviour
     [SerializeField] private BallLauncher _ballLauncher;
     [SerializeField] private Button _pauseButton;
     [SerializeField] private PausePanel _pausePanel;
+    [SerializeField] private GameOverPanel _gameOverPanel;
     [SerializeField] private SceneChanger _sceneChanger;
 
     private ObjectPool<Row> _rowsPool;
@@ -280,7 +281,7 @@ public class GameplayManager : MonoBehaviour
             {
                 if (IsLosed())
                 {
-
+                    _gameOverPanel.Appear();
                 }
                 else
                 {
