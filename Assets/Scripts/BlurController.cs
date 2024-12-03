@@ -8,6 +8,8 @@ public class BlurController : MonoBehaviour
 
     public Tween Appear()
     {
+        gameObject.SetActive(true);
+
         return DOTween.To(() => _blur.Intensity, x => _blur.Intensity = x, 1f, 0.125f)
              .SetEase(Ease.OutQuad);
     }
@@ -15,7 +17,11 @@ public class BlurController : MonoBehaviour
     public Tween Disappear()
     {
         return DOTween.To(() => _blur.Intensity, x => _blur.Intensity = x, 0f, 0.125f)
-            .SetEase(Ease.InQuad);
+            .SetEase(Ease.InQuad)
+            .OnKill(() =>
+            {
+                gameObject.SetActive(false);
+            });
     }
 
     public float Intensity
