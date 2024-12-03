@@ -13,6 +13,7 @@ public class GameplayManager : MonoBehaviour
     [SerializeField] private PausePanel _pausePanel;
     [SerializeField] private GameOverPanel _gameOverPanel;
     [SerializeField] private SceneChanger _sceneChanger;
+    [SerializeField] private Button _speedUpButton;
 
     private ObjectPool<Row> _rowsPool;
     private ObjectPool<Brick> _bricksPool;
@@ -54,11 +55,6 @@ public class GameplayManager : MonoBehaviour
         if (_isCanLaunchBalls)
         {
             _ballLauncher.TryLaunch();
-        }
-
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            Time.timeScale = 2f;
         }
     }
 
@@ -260,6 +256,8 @@ public class GameplayManager : MonoBehaviour
 
         _isCanLaunchBalls = false;
         _ballLauncher.BallsFallen += OnBallsFallen;
+
+        StartCoroutine(ShowSpeedUpButton());
     }
 
     private void OnBallsFallen()
@@ -268,6 +266,9 @@ public class GameplayManager : MonoBehaviour
         {
             Time.timeScale = 1f;
         }
+
+        _speedUpButton.gameObject.SetActive(false);
+        StopCoroutine(ShowSpeedUpButton());
 
         _ballLauncher.BallsFallen -= OnBallsFallen;
 
@@ -347,5 +348,21 @@ public class GameplayManager : MonoBehaviour
     private void OnPauseButtonClicked()
     {
         SetPause(true);
+    }
+
+    private IEnumerator ShowSpeedUpButton()
+    {
+        yield return new WaitForSeconds(1f);
+
+        _speedUpButton.gameObject.SetActive(true);
+        _speedUpButton.onClick.AddListener(OnSpeedUpButtonClicked);
+    }
+
+    private void OnSpeedUpButtonClicked()
+    {
+        _speedUpButton.onClick.RemoveListener(OnSpeedUpButtonClicked);
+        _speedUpButton.gameObject.SetActive(false);
+
+        Time.timeScale = 2f;
     }
 }
