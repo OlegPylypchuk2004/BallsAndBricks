@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GameplayManager : MonoBehaviour
@@ -16,6 +15,7 @@ public class GameplayManager : MonoBehaviour
 
     private ObjectPool<Row> _rowsPool;
     private ObjectPool<Brick> _bricksPool;
+    private ObjectPool<BrickDestroyParticles> _brickParticlesPool;
     private ObjectPool<PickupableItem> _pickupableBallPool;
 
     private List<Row> _rows;
@@ -68,6 +68,9 @@ public class GameplayManager : MonoBehaviour
 
         Brick brickPrefab = Resources.Load<Brick>("Prefabs/Brick");
         _bricksPool = new ObjectPool<Brick>(brickPrefab, 10);
+
+        BrickDestroyParticles brickDestroyParticles = Resources.Load<BrickDestroyParticles>("Prefabs/BrickDestroyParticles");
+        _brickParticlesPool = new ObjectPool<BrickDestroyParticles>(brickDestroyParticles, 10);
 
         PickupableBall pickupableBall = Resources.Load<PickupableBall>("Prefabs/PickupableBall");
         _pickupableBallPool = new ObjectPool<PickupableItem>(pickupableBall, 5);
@@ -207,6 +210,16 @@ public class GameplayManager : MonoBehaviour
         brick.transform.SetParent(null);
         _bricksPool.ReturnObject(brick);
         ScoreManager.Instance.AddBrickDestroyCount();
+
+        BrickDestroyParticles brickDestroyParticles = _brickParticlesPool.GetObject();
+        brickDestroyParticles.transform.position = brick.transform.position;
+        brickDestroyParticles.ParticlesPlayed += OnBrickDestroyParticlesPlayed;
+    }
+
+    private void OnBrickDestroyParticlesPlayed(BrickDestroyParticles brickDestroyParticles)
+    {
+        brickDestroyParticles.ParticlesPlayed -= OnBrickDestroyParticlesPlayed;
+        _brickParticlesPool.ReturnObject(brickDestroyParticles);
     }
 
     private void OnRowsAllBricksBrokeDown(Row row)
