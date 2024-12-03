@@ -82,6 +82,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aaaff470a4844d848ab2b8212d755305, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _outlineSpriteRenderer: {fileID: 3821757223072980431}
+  _circleTransform: {fileID: 8651765747244952862}
 --- !u!1 &5404114854624476127
 GameObject:
   m_ObjectHideFlags: 0

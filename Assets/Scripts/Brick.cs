@@ -12,6 +12,7 @@ public class Brick : MonoBehaviour
 
     private int _number;
     private Tween _textAnimation;
+    private Sequence _appearSequence;
 
     public event Action<Brick> BrokeDown;
 
@@ -21,6 +22,31 @@ public class Brick : MonoBehaviour
             .SetAutoKill(false)
             .SetLink(gameObject)
             .Pause();
+
+        _appearSequence = DOTween.Sequence();
+
+        _appearSequence.Append
+            (_backgroundSpriteRenderer.DOFade(1f, 0.5f)
+            .From(0f)
+            .SetEase(Ease.OutQuad));
+
+        _appearSequence.Join
+            (_gradientMaskSpriteRenderer.DOFade(1f, 0.5f)
+            .From(0f)
+            .SetEase(Ease.OutQuad));
+
+        _appearSequence.Join
+            (_numberText.DOFade(1f, 0.5f)
+            .From(0f)
+            .SetEase(Ease.OutQuad));
+
+        _appearSequence.SetLink(gameObject);
+        _appearSequence.SetAutoKill(false);
+    }
+
+    private void OnEnable()
+    {
+        _appearSequence.Restart();
     }
 
     public int Number
@@ -61,7 +87,11 @@ public class Brick : MonoBehaviour
     private void UpdateColor()
     {
         float t = Mathf.Clamp01((float)_number / 50);
-        _backgroundSpriteRenderer.color = _colorGradient.Evaluate(t);
+
+        Color targetBackgroundColor = _colorGradient.Evaluate(t);
+        targetBackgroundColor.a = _backgroundSpriteRenderer.color.a;
+
+        _backgroundSpriteRenderer.color = targetBackgroundColor;
 
         _gradientMaskSpriteRenderer.color = Color.Lerp(_backgroundSpriteRenderer.color, Color.black, 0.15f);
     }
