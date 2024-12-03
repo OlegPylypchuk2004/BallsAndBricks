@@ -12,6 +12,7 @@ public class GameplayManager : MonoBehaviour
     [SerializeField] private BallLauncher _ballLauncher;
     [SerializeField] private Button _pauseButton;
     [SerializeField] private PausePanel _pausePanel;
+    [SerializeField] private SceneChanger _sceneChanger;
 
     private ObjectPool<Row> _rowsPool;
     private ObjectPool<Brick> _bricksPool;
@@ -185,8 +186,13 @@ public class GameplayManager : MonoBehaviour
 
     public void RestartGame()
     {
+        if (_isPaused)
+        {
+            SetPause(false);
+        }
+
         GameDataManager.DeleteSave();
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        _sceneChanger.LoadCurrent();
     }
 
     public void GoToMenu()
