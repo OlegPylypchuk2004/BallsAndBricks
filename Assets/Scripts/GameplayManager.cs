@@ -83,7 +83,7 @@ public class GameplayManager : MonoBehaviour
         Row row = _rowsPool.GetObject();
         row.transform.position = new Vector2(0f, 3.5f);
 
-        int pointsCount = Random.Range(4, row.Points.Length);
+        int pointsCount = Random.Range(5, row.Points.Length);
         List<Transform> randomBricksPoints = row.Points
             .OrderBy(_ => Random.value)
             .Take(pointsCount)
@@ -127,6 +127,8 @@ public class GameplayManager : MonoBehaviour
     {
         GameData gameData = new GameData();
 
+        gameData.BrickMovesCount = ScoreManager.Instance.BrickMovesCount;
+        gameData.BrickDestroyCount = ScoreManager.Instance.BrickDestroyCount;
         gameData.BallsCount = _ballLauncher.BallsCount;
         gameData.HorizontalBallsPosition = _ballLauncher.HorizontalBallsPosition;
 
@@ -150,6 +152,8 @@ public class GameplayManager : MonoBehaviour
     private void LoadGame()
     {
         GameData gameData = GameDataManager.LoadGameData();
+
+        ScoreManager.Instance.Initialize(gameData.BrickMovesCount, gameData.BrickDestroyCount);
 
         _ballLauncher.SpawnBall(gameData.BallsCount);
         _ballLauncher.Initilize(gameData.HorizontalBallsPosition);
