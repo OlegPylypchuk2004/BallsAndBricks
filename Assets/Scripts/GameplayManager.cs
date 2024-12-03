@@ -24,6 +24,7 @@ public class GameplayManager : MonoBehaviour
     private bool _isCanLaunchBalls;
     private int _pickedBallsCount;
     private bool _isPaused;
+    private Coroutine _showSpeedUpButtonCoroutine;
 
     private void Start()
     {
@@ -256,7 +257,7 @@ public class GameplayManager : MonoBehaviour
         _isCanLaunchBalls = false;
         _ballLauncher.BallsFallen += OnBallsFallen;
 
-        StartCoroutine(ShowSpeedUpButton());
+        _showSpeedUpButtonCoroutine = StartCoroutine(ShowSpeedUpButton());
     }
 
     private void OnBallsFallen()
@@ -267,7 +268,11 @@ public class GameplayManager : MonoBehaviour
         }
 
         _speedUpButton.gameObject.SetActive(false);
-        StopCoroutine(ShowSpeedUpButton());
+
+        if (_showSpeedUpButtonCoroutine != null)
+        {
+            StopCoroutine(_showSpeedUpButtonCoroutine);
+        }
 
         _ballLauncher.BallsFallen -= OnBallsFallen;
 
@@ -351,7 +356,7 @@ public class GameplayManager : MonoBehaviour
 
     private IEnumerator ShowSpeedUpButton()
     {
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(5f);
 
         _speedUpButton.gameObject.SetActive(true);
         _speedUpButton.onClick.AddListener(OnSpeedUpButtonClicked);
