@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GameplayManager : MonoBehaviour
@@ -12,9 +11,12 @@ public class GameplayManager : MonoBehaviour
     [SerializeField] private BallLauncher _ballLauncher;
     [SerializeField] private Button _pauseButton;
     [SerializeField] private PausePanel _pausePanel;
+    [SerializeField] private GameOverPanel _gameOverPanel;
+    [SerializeField] private SceneChanger _sceneChanger;
 
     private ObjectPool<Row> _rowsPool;
     private ObjectPool<Brick> _bricksPool;
+    private ObjectPool<BrickDestroyParticles> _brickParticlesPool;
     private ObjectPool<PickupableItem> _pickupableBallPool;
 
     private List<Row> _rows;
@@ -58,12 +60,6 @@ public class GameplayManager : MonoBehaviour
         {
             Time.timeScale = 2f;
         }
-
-        if (Input.GetKeyDown(KeyCode.D))
-        {
-            GameDataManager.DeleteSave();
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-        }
     }
 
     private void CreatePools()
@@ -74,6 +70,9 @@ public class GameplayManager : MonoBehaviour
         Brick brickPrefab = Resources.Load<Brick>("Prefabs/Brick");
         _bricksPool = new ObjectPool<Brick>(brickPrefab, 10);
 
+        BrickDestroyParticles brickDestroyParticles = Resources.Load<BrickDestroyParticles>("Prefabs/BrickDestroyParticles");
+        _brickParticlesPool = new ObjectPool<BrickDestroyParticles>(brickDestroyParticles, 10);
+
         PickupableBall pickupableBall = Resources.Load<PickupableBall>("Prefabs/PickupableBall");
         _pickupableBallPool = new ObjectPool<PickupableItem>(pickupableBall, 5);
     }
@@ -83,7 +82,7 @@ public class GameplayManager : MonoBehaviour
         Row row = _rowsPool.GetObject();
         row.transform.position = new Vector2(0f, 3.5f);
 
-        int pointsCount = Random.Range(4, row.Points.Length);
+        int pointsCount = Random.Range(5, row.Points.Length);
         List<Transform> randomBricksPoints = row.Points
             .OrderBy(_ => Random.value)
             .Take(pointsCount)
@@ -127,7 +126,10 @@ public class GameplayManager : MonoBehaviour
     {
         GameData gameData = new GameData();
 
+        gameData.BrickMovesCount = ScoreManager.Instance.BrickMovesCount;
+        gameData.BrickDestroyCount = ScoreManager.Instance.BrickDestroyCount;
         gameData.BallsCount = _ballLauncher.BallsCount;
+        gameData.HorizontalBallsPosition = _ballLauncher.HorizontalBallsPosition;
 
         foreach (Row row in _rows)
         {
@@ -150,8 +152,10 @@ public class GameplayManager : MonoBehaviour
     {
         GameData gameData = GameDataManager.LoadGameData();
 
+        ScoreManager.Instance.Initialize(gameData.BrickMovesCount, gameData.BrickDestroyCount);
+
         _ballLauncher.SpawnBall(gameData.BallsCount);
-        _ballLauncher.Initilize();
+        _ballLauncher.Initilize(gameData.HorizontalBallsPosition);
 
         RowData[] rowDatas = gameData.RowDatas.ToArray();
 
@@ -184,6 +188,21 @@ public class GameplayManager : MonoBehaviour
         }
     }
 
+    public void RestartGame()
+    {
+        if (_isPaused)
+        {
+            SetPause(false);
+        }
+
+        GameDataManager.DeleteSave();
+        _sceneChanger.LoadCurrent();
+    }
+
+    public void GoToMenu()
+    {
+
+    }
 
     private void OnBrickBrokeDown(Brick brick)
     {
@@ -192,6 +211,16 @@ public class GameplayManager : MonoBehaviour
         brick.transform.SetParent(null);
         _bricksPool.ReturnObject(brick);
         ScoreManager.Instance.AddBrickDestroyCount();
+
+        BrickDestroyParticles brickDestroyParticles = _brickParticlesPool.GetObject();
+        brickDestroyParticles.transform.position = brick.transform.position;
+        brickDestroyParticles.ParticlesPlayed += OnBrickDestroyParticlesPlayed;
+    }
+
+    private void OnBrickDestroyParticlesPlayed(BrickDestroyParticles brickDestroyParticles)
+    {
+        brickDestroyParticles.ParticlesPlayed -= OnBrickDestroyParticlesPlayed;
+        _brickParticlesPool.ReturnObject(brickDestroyParticles);
     }
 
     private void OnRowsAllBricksBrokeDown(Row row)
@@ -252,7 +281,7 @@ public class GameplayManager : MonoBehaviour
             {
                 if (IsLosed())
                 {
-
+                    _gameOverPanel.Appear();
                 }
                 else
                 {
@@ -278,7 +307,7 @@ public class GameplayManager : MonoBehaviour
         return false;
     }
 
-    private void SetPause(bool isPaused)
+    public void SetPause(bool isPaused)
     {
         _isPaused = isPaused;
 
@@ -287,18 +316,11 @@ public class GameplayManager : MonoBehaviour
             Time.timeScale = 0f;
 
             _pausePanel.Appear();
-            _pausePanel.ContinueButtonClicked += OnPausePanelContinueButtonClicked;
         }
         else
         {
             Time.timeScale = 1f;
         }
-    }
-
-    private void OnPausePanelContinueButtonClicked()
-    {
-        SetPause(false);
-        _pausePanel.ContinueButtonClicked -= OnPausePanelContinueButtonClicked;
     }
 
     private bool IsTouchOverUI()

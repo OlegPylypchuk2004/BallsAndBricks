@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ public class BallLauncher : MonoBehaviour
     [SerializeField] private Ball _ballPrefab;
     [SerializeField] private Camera _camera;
     [SerializeField] private Target _target;
-    [SerializeField] private TextMeshProUGUI _ballsCountText;
+    [SerializeField] private TextMeshPro _ballsCountText;
 
     private ObjectPool<Ball> _ballsPool;
     private List<Ball> _balls;
@@ -30,7 +31,7 @@ public class BallLauncher : MonoBehaviour
         _ballsPool = new ObjectPool<Ball>(ballPrefab, 10);
     }
 
-    public void Initilize()
+    public void Initilize(float horizontalBallsPosition = 0f)
     {
         if (_balls.Count <= 0)
         {
@@ -39,15 +40,17 @@ public class BallLauncher : MonoBehaviour
 
         for (int i = 0; i < _balls.Count; i++)
         {
-            _balls[i].transform.position = new Vector2(0f, -4.75f);
+            _balls[i].transform.position = new Vector2(horizontalBallsPosition, -4.75f);
         }
 
         _target.transform.position = _balls[0].transform.position;
 
         _ballsCountText.text = $"x{_balls.Count}";
+        _ballsCountText.transform.position = new Vector2(_balls[0].transform.position.x, _ballsCountText.transform.position.y);
     }
 
     public int BallsCount => _balls.Count;
+    public float HorizontalBallsPosition => _balls[0].transform.position.x;
 
     public void SpawnBall(int count = 1)
     {
@@ -137,33 +140,49 @@ public class BallLauncher : MonoBehaviour
         ball.Fallen -= OnBallFallen;
 
         _fallenBallsCount++;
+        Sequence resetBallsSequence = DOTween.Sequence();
 
-        if (_balls[0] == ball)
+        if (_fallenBallsCount == 1)
         {
             _firstFallenBallPosition = position;
+        }
+        else
+        {
+            resetBallsSequence.Join
+                (ball.transform.DOMove(_firstFallenBallPosition, 0.125f)
+                    .SetEase(Ease.Linear)
+                    .SetLink(gameObject));
         }
 
         if (_fallenBallsCount >= _balls.Count)
         {
             _fallenBallsCount = 0;
-            _target.transform.position = _balls[0].transform.position;
 
-            BallsFallen?.Invoke();
+            resetBallsSequence.OnKill(() =>
+            {
+                _target.transform.position = _balls[0].transform.position;
+
+                BallsFallen?.Invoke();
+            });
         }
     }
 
     private void ResetBalls()
     {
-        for (int i = 0; i < _balls.Count; i++)
+        if (_balls.Count > 0)
         {
-            if (i != 0)
+            for (int i = 0; i < _balls.Count; i++)
             {
-                _balls[i].gameObject.SetActive(false);
+                if (i != 0)
+                {
+                    _balls[i].gameObject.SetActive(false);
+                }
+
+                _balls[i].transform.position = _firstFallenBallPosition;
             }
 
-            _balls[i].transform.position = _firstFallenBallPosition;
+            _ballsCountText.text = $"x{_balls.Count}";
+            _ballsCountText.transform.position = new Vector2(_balls[0].transform.position.x, _ballsCountText.transform.position.y);
         }
-
-        _ballsCountText.text = $"x{_balls.Count}";
     }
 }

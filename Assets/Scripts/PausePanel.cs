@@ -1,75 +1,72 @@
 using DG.Tweening;
-using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PausePanel : MonoBehaviour
+public class PausePanel : Panel
 {
-    [SerializeField] private Image _fadeImage;
-    [SerializeField] private RectTransform _panelRectTransform;
-    [SerializeField] private CanvasGroup _canvasGroup;
-    [SerializeField] private Button _menuButton;
     [SerializeField] private Button _continueButton;
     [SerializeField] private Button _restartButton;
+    [SerializeField] private Button _menuButton;
+    [SerializeField] private Button _closeButton;
+    [SerializeField] private GameplayManager _gameplayManager;
+    [SerializeField] private ConfirmPanel _confirmPanel;
 
-    public event Action ContinueButtonClicked;
-
-    public void Appear()
+    protected override void SubscribeOnEvents()
     {
-        gameObject.SetActive(true);
-        _canvasGroup.interactable = false;
-        _fadeImage.color = new Color(_fadeImage.color.r, _fadeImage.color.g, _fadeImage.color.b, 0f);
+        base.SubscribeOnEvents();
 
-        Sequence appearSequence = DOTween.Sequence();
-
-        appearSequence.Append
-            (_panelRectTransform.DOScale(1f, 0.25f)
-            .From(0f)
-            .SetEase(Ease.OutBack));
-
-        appearSequence.Join
-            (_fadeImage.DOFade(0.95f, 0.25f)
-            .From(0f)
-            .SetEase(Ease.OutQuad));
-
-        appearSequence.SetUpdate(true);
-        appearSequence.SetLink(gameObject);
-
-        appearSequence.OnComplete(() =>
-        {
-            _canvasGroup.interactable = true;
-            _continueButton.onClick.AddListener(OnContinueButtonClicked);
-        });
+        _continueButton.onClick.AddListener(OnContinueButtonClicked);
+        _restartButton.onClick.AddListener(OnRestartButtonClicked);
+        _menuButton.onClick.AddListener(OnMenuButtonClicked);
+        _closeButton.onClick.AddListener(OnCloseButtonClicked);
     }
 
-    private void Disappear()
+    protected override void UnsubscribeOnEvents()
     {
-        _canvasGroup.interactable = false;
+        base.UnsubscribeOnEvents();
+
         _continueButton.onClick.RemoveListener(OnContinueButtonClicked);
-
-        Sequence disappearSequence = DOTween.Sequence();
-
-        disappearSequence.Append
-            (_fadeImage.DOFade(0f, 0.25f)
-            .SetEase(Ease.InQuad));
-
-        disappearSequence.Join
-            (_panelRectTransform.DOScale(0f, 0.25f)
-            .SetEase(Ease.InQuad));
-
-        disappearSequence.SetUpdate(true);
-        disappearSequence.SetLink(gameObject);
-
-        disappearSequence.OnComplete(() =>
-        {
-            gameObject.SetActive(false);
-
-            ContinueButtonClicked?.Invoke();
-        });
+        _restartButton.onClick.RemoveListener(OnRestartButtonClicked);
+        _menuButton.onClick.RemoveListener(OnMenuButtonClicked);
+        _closeButton.onClick.RemoveListener(OnCloseButtonClicked);
     }
 
     private void OnContinueButtonClicked()
     {
-        Disappear();
+        Disappear().OnComplete(() =>
+        {
+            _gameplayManager.SetPause(false);
+        });
+    }
+
+    private void OnRestartButtonClicked()
+    {
+        Disappear().OnComplete(() =>
+        {
+            if (ScoreManager.Instance.BrickMovesCount > 0)
+            {
+                _confirmPanel.Appear();
+            }
+            else
+            {
+                _gameplayManager.RestartGame();
+            }
+        });
+    }
+
+    private void OnMenuButtonClicked()
+    {
+        Disappear().OnComplete(() =>
+        {
+            _gameplayManager.GoToMenu();
+        });
+    }
+
+    private void OnCloseButtonClicked()
+    {
+        Disappear().OnComplete(() =>
+        {
+            _gameplayManager.SetPause(false);
+        });
     }
 }

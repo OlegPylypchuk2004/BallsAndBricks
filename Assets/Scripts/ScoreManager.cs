@@ -23,6 +23,15 @@ public class ScoreManager : MonoBehaviour
         }
     }
 
+    public void Initialize(int brickMovesCount, int brickDestroyCount)
+    {
+        _brickMovesCount = brickMovesCount;
+        BricksMoveCountChanged?.Invoke(_brickMovesCount);
+
+        _brickDestroyCount = brickDestroyCount;
+        BricksDestroyCountChanged?.Invoke(_brickDestroyCount);
+    }
+
     public int BrickMovesCount
     {
         get { return _brickMovesCount; }

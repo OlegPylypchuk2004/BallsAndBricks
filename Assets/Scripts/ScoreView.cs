@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ScoreView : MonoBehaviour
 {
-    [SerializeField] private TextMeshProUGUI _scoreText;
+    [SerializeField] private TextMeshPro _scoreText;
 
     private Tween _textAnimation;
 
