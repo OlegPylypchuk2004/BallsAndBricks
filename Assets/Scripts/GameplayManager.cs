@@ -55,6 +55,14 @@ public class GameplayManager : MonoBehaviour
         {
             _ballLauncher.TryLaunch();
         }
+
+#if UNITY_EDITOR
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            GameDataManager.DeleteSave();
+            _sceneChanger.LoadCurrent();
+        }
+#endif
     }
 
     private void CreatePools()
@@ -93,6 +101,8 @@ public class GameplayManager : MonoBehaviour
                 pickupableBall.transform.SetParent(row.transform);
                 pickupableBall.transform.position = point.position;
                 pickupableBall.Picked += OnPickupableBallPicked;
+
+                row.AddPickupableBall((PickupableBall)pickupableBall);
             }
             else
             {
@@ -136,7 +146,15 @@ public class GameplayManager : MonoBehaviour
                 brickDatas.Add(brickData);
             }
 
-            RowData rowData = new RowData(row.transform.position, brickDatas.ToArray());
+            List<PickupableBallData> pickupableBallDatas = new List<PickupableBallData>();
+
+            for (int i = 0; i < row.PickupableBalls.Length; i++)
+            {
+                PickupableBallData pickupableBallData = new PickupableBallData(row.PickupableBalls[0].transform.position);
+                pickupableBallDatas.Add(pickupableBallData);
+            }
+
+            RowData rowData = new RowData(row.transform.position, brickDatas.ToArray(), pickupableBallDatas.ToArray());
             gameData.SaveRow(rowData);
         }
 
@@ -172,6 +190,16 @@ public class GameplayManager : MonoBehaviour
                     brick.BrokeDown += OnBrickBrokeDown;
 
                     row.AddBrick(brick);
+                }
+
+                foreach (PickupableBallData pickupableBallData in rowData.PickupableBallDatas)
+                {
+                    PickupableBall pickupableBall = (PickupableBall)_pickupableBallPool.GetObject();
+                    pickupableBall.transform.SetParent(row.transform);
+                    pickupableBall.transform.localPosition = new Vector2(pickupableBallData.Position.x, 0f);
+                    pickupableBall.Picked += OnPickupableBallPicked;
+
+                    row.AddPickupableBall(pickupableBall);
                 }
 
                 row.AllBricksBrokeDown += OnRowsAllBricksBrokeDown;
