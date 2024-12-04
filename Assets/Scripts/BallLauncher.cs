@@ -130,7 +130,14 @@ public class BallLauncher : MonoBehaviour
 
     private Vector2 GetMouseWorldPosition()
     {
-        return _camera.ScreenToWorldPoint(Input.mousePosition);
+        Vector3 screenPos = Input.mousePosition;
+
+        if (screenPos.x < 0 || screenPos.x > Screen.width || screenPos.y < 0 || screenPos.y > Screen.height)
+        {
+            return Vector2.zero;
+        }
+
+        return _camera.ScreenToWorldPoint(screenPos);
     }
 
     private IEnumerator Launch(Vector2 direction)
