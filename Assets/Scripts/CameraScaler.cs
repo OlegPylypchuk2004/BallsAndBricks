@@ -11,6 +11,8 @@ public class CameraScaler : MonoBehaviour
         float currentScreenCorrelation = (float)Screen.height / (float)Screen.width;
         float currentCameraSize = currentScreenCorrelation * normalCameraSize / normalScreenCorrelation;
 
+        currentCameraSize = Mathf.Clamp(currentCameraSize, normalCameraSize, 15f);
+
         _camera.orthographicSize = currentCameraSize;
     }
 }
