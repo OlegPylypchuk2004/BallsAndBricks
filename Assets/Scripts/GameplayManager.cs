@@ -36,7 +36,7 @@ public class GameplayManager : MonoBehaviour
     private void Start()
     {
         _rows = new List<Row>();
-        Debug.LogError(PlayerDataManager.LoadPlayerData().BestScore);
+
         CreatePools();
         LoadGame();
 
@@ -135,7 +135,7 @@ public class GameplayManager : MonoBehaviour
                     Brick brick = _bricksPool.GetObject();
                     brick.transform.SetParent(row.transform);
                     brick.transform.position = point.position;
-                    brick.Number = Mathf.Clamp(ScoreManager.Instance.BrickMovesCount + UnityEngine.Random.Range(0, 5), 1, int.MaxValue);
+                    brick.Number = Mathf.Clamp(ScoreManager.Instance.BrickMovesCount + UnityEngine.Random.Range(0, 0), 1, int.MaxValue);
                     brick.BrokeDown += OnBrickBrokeDown;
 
                     row.AddBrick(brick);
@@ -300,6 +300,22 @@ public class GameplayManager : MonoBehaviour
     {
         _rows.Remove(row);
         _rowsPool.ReturnObject(row);
+
+        if (row.PickupableBalls.Length > 0)
+        {
+            foreach (PickupableBall pickupableBall in row.PickupableBalls)
+            {
+                pickupableBall.Pickup();
+            }
+        }
+
+        if (row.PickupableCoins.Length > 0)
+        {
+            foreach (PickupableCoin pickupableCoin in row.PickupableCoins)
+            {
+                pickupableCoin.Pickup();
+            }
+        }
     }
 
     private void OnPickupableBallPicked(PickupableItem pickupableBall)
