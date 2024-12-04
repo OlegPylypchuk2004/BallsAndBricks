@@ -47,7 +47,7 @@ public class BallLauncher : MonoBehaviour
             _balls[i].transform.position = new Vector2(horizontalBallsPosition, -4.75f);
         }
 
-        _target.transform.position = _balls[0].transform.position;
+        _firstFallenBallPosition = _balls[0].transform.position;
 
         _ballsCountText.text = $"x{_balls.Count}";
         _ballsCountText.transform.position = new Vector2(_balls[0].transform.position.x, _ballsCountText.transform.position.y);
@@ -79,6 +79,7 @@ public class BallLauncher : MonoBehaviour
         if (direction.y > 0)
         {
             _target.gameObject.SetActive(true);
+            _target.transform.position = _firstFallenBallPosition;
 
             if (Input.GetMouseButton(0))
             {
@@ -221,7 +222,5 @@ public class BallLauncher : MonoBehaviour
         {
             ball.transform.position = targetBallsPosition;
         }
-
-        _target.transform.position = targetBallsPosition;
     }
 }
