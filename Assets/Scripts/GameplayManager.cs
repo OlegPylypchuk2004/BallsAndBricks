@@ -2,6 +2,7 @@ using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -14,6 +15,7 @@ public class GameplayManager : MonoBehaviour
     [SerializeField] private GameOverPanel _gameOverPanel;
     [SerializeField] private SceneChanger _sceneChanger;
     [SerializeField] private Button _speedUpButton;
+    [SerializeField] private TextMeshProUGUI _coinsCountText;
 
     private ObjectPool<Row> _rowsPool;
     private ObjectPool<Brick> _bricksPool;
@@ -65,6 +67,8 @@ public class GameplayManager : MonoBehaviour
             _sceneChanger.LoadCurrent();
         }
 #endif
+
+        _coinsCountText.text = $"{_pickedCoinsCount}";
     }
 
     private void CreatePools()
