@@ -29,6 +29,7 @@ public class GameplayManager : MonoBehaviour
     private int _pickedCoinsCount;
     private bool _isPaused;
     private Coroutine _showSpeedUpButtonCoroutine;
+    private Coroutine _instantReturnBallsCoroutine;
 
     private void Start()
     {
@@ -39,6 +40,7 @@ public class GameplayManager : MonoBehaviour
 
         _isCanLaunchBalls = true;
         _ballLauncher.LaunchStarted += OnLaunchStarted;
+        _ballLauncher.LaunchFinished += OnLaunchFinished;
 
         _pauseButton.onClick.AddListener(OnPauseButtonClicked);
     }
@@ -342,6 +344,13 @@ public class GameplayManager : MonoBehaviour
         _showSpeedUpButtonCoroutine = StartCoroutine(ShowSpeedUpButton());
     }
 
+    private void OnLaunchFinished()
+    {
+        _ballLauncher.LaunchFinished -= OnLaunchFinished;
+
+        _instantReturnBallsCoroutine = StartCoroutine(InstantReturnBalls());
+    }
+
     private void OnBallsFallen()
     {
         if (!_isPaused)
@@ -354,6 +363,11 @@ public class GameplayManager : MonoBehaviour
         if (_showSpeedUpButtonCoroutine != null)
         {
             StopCoroutine(_showSpeedUpButtonCoroutine);
+        }
+
+        if (_instantReturnBallsCoroutine != null)
+        {
+            StopCoroutine(_instantReturnBallsCoroutine);
         }
 
         _ballLauncher.BallsFallen -= OnBallsFallen;
@@ -394,6 +408,7 @@ public class GameplayManager : MonoBehaviour
 
                     _isCanLaunchBalls = true;
                     _ballLauncher.LaunchStarted += OnLaunchStarted;
+                    _ballLauncher.LaunchFinished += OnLaunchFinished;
                 }
             });
     }
@@ -459,6 +474,13 @@ public class GameplayManager : MonoBehaviour
 
         _speedUpButton.gameObject.SetActive(true);
         _speedUpButton.onClick.AddListener(OnSpeedUpButtonClicked);
+    }
+
+    private IEnumerator InstantReturnBalls()
+    {
+        yield return new WaitForSeconds(30f);
+
+        _ballLauncher.InstantReturnBalls();
     }
 
     private void OnSpeedUpButtonClicked()

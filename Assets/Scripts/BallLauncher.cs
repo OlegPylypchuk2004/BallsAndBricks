@@ -21,6 +21,7 @@ public class BallLauncher : MonoBehaviour
     private Vector2 _launchDirection;
 
     public event Action LaunchStarted;
+    public event Action LaunchFinished;
     public event Action BallsFallen;
 
     private void Awake()
@@ -94,8 +95,6 @@ public class BallLauncher : MonoBehaviour
             if (Input.GetMouseButtonUp(0))
             {
                 StartCoroutine(Launch(direction));
-
-                LaunchStarted?.Invoke();
             }
         }
         else
@@ -135,6 +134,8 @@ public class BallLauncher : MonoBehaviour
 
     private IEnumerator Launch(Vector2 direction)
     {
+        LaunchStarted?.Invoke();
+
         int notLaunchedBallsCount = _balls.Count;
 
         foreach (Ball ball in _balls)
@@ -157,6 +158,8 @@ public class BallLauncher : MonoBehaviour
 
             ball.Fallen += OnBallFallen;
         }
+
+        LaunchFinished?.Invoke();
     }
 
     private void OnBallFallen(Ball ball, Vector2 position)
@@ -208,5 +211,17 @@ public class BallLauncher : MonoBehaviour
             _ballsCountText.text = $"x{_balls.Count}";
             _ballsCountText.transform.position = new Vector2(_balls[0].transform.position.x, _ballsCountText.transform.position.y);
         }
+    }
+
+    public void InstantReturnBalls()
+    {
+        Vector2 targetBallsPosition = new Vector2(0f, -4.755f);
+
+        foreach (Ball ball in _balls)
+        {
+            ball.transform.position = targetBallsPosition;
+        }
+
+        _target.transform.position = targetBallsPosition;
     }
 }
