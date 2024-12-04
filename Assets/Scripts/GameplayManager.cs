@@ -19,10 +19,12 @@ public class GameplayManager : MonoBehaviour
     private ObjectPool<Brick> _bricksPool;
     private ObjectPool<BrickDestroyParticles> _brickParticlesPool;
     private ObjectPool<PickupableItem> _pickupableBallPool;
+    private ObjectPool<PickupableItem> _pickupableCoinPool;
 
     private List<Row> _rows;
     private bool _isCanLaunchBalls;
     private int _pickedBallsCount;
+    private int _pickedCoinsCount;
     private bool _isPaused;
     private Coroutine _showSpeedUpButtonCoroutine;
 
@@ -78,6 +80,9 @@ public class GameplayManager : MonoBehaviour
 
         PickupableBall pickupableBall = Resources.Load<PickupableBall>("Prefabs/PickupableBall");
         _pickupableBallPool = new ObjectPool<PickupableItem>(pickupableBall, 5);
+
+        PickupableCoin pickupableCoin = Resources.Load<PickupableCoin>("Prefabs/PickupableCoin");
+        _pickupableCoinPool = new ObjectPool<PickupableItem>(pickupableCoin, 5);
     }
 
     private void SpawnRow()
@@ -90,6 +95,8 @@ public class GameplayManager : MonoBehaviour
             .OrderBy(_ => Random.value)
             .Take(pointsCount)
             .ToList();
+
+        bool isSpawnCoin = Random.Range(0, 10) >= 5;
 
         for (int i = 0; i < randomBricksPoints.Count; i++)
         {
@@ -106,13 +113,27 @@ public class GameplayManager : MonoBehaviour
             }
             else
             {
-                Brick brick = _bricksPool.GetObject();
-                brick.transform.SetParent(row.transform);
-                brick.transform.position = point.position;
-                brick.Number = Mathf.Clamp(ScoreManager.Instance.BrickMovesCount + Random.Range(0, 5), 1, int.MaxValue);
-                brick.BrokeDown += OnBrickBrokeDown;
+                if (isSpawnCoin)
+                {
+                    isSpawnCoin = false;
 
-                row.AddBrick(brick);
+                    PickupableItem pickupableCoint = _pickupableCoinPool.GetObject();
+                    pickupableCoint.transform.SetParent(row.transform);
+                    pickupableCoint.transform.position = point.position;
+                    pickupableCoint.Picked += OnPickupableCoinPicked;
+
+                    //row.AddPickupableBall((PickupableBall)pickupableBall);
+                }
+                else
+                {
+                    Brick brick = _bricksPool.GetObject();
+                    brick.transform.SetParent(row.transform);
+                    brick.transform.position = point.position;
+                    brick.Number = Mathf.Clamp(ScoreManager.Instance.BrickMovesCount + Random.Range(0, 5), 1, int.MaxValue);
+                    brick.BrokeDown += OnBrickBrokeDown;
+
+                    row.AddBrick(brick);
+                }
             }
         }
 
@@ -166,6 +187,8 @@ public class GameplayManager : MonoBehaviour
         GameData gameData = GameDataManager.LoadGameData();
 
         ScoreManager.Instance.Initialize(gameData.BrickMovesCount, gameData.BrickDestroyCount);
+
+        _pickedCoinsCount = gameData.PickedCoinsCount;
 
         _ballLauncher.SpawnBall(gameData.BallsCount);
         _ballLauncher.Initilize(gameData.HorizontalBallsPosition);
@@ -261,6 +284,14 @@ public class GameplayManager : MonoBehaviour
         _pickedBallsCount++;
     }
 
+    private void OnPickupableCoinPicked(PickupableItem pickupableCoin)
+    {
+        pickupableCoin.Picked -= OnPickupableBallPicked;
+        _pickupableCoinPool.ReturnObject(pickupableCoin);
+
+        _pickedCoinsCount++;
+    }
+
     private Tween PlayMoveRowsAnimation()
     {
         Sequence moveRowsSequence = DOTween.Sequence();
@@ -309,6 +340,8 @@ public class GameplayManager : MonoBehaviour
 
         ScoreManager.Instance.AddBrickMove();
 
+        GameDataManager.LoadGameData().PickedCoinsCount = _pickedCoinsCount;
+
         PlayMoveRowsAnimation()
             .OnComplete(() =>
             {
@@ -320,6 +353,16 @@ public class GameplayManager : MonoBehaviour
                     {
                         PlayerDataManager.SavePlayerData(new PlayerData(score));
                     }
+
+                    if (_pickedCoinsCount > 0)
+                    {
+                        PlayerData playerData = new PlayerData();
+                        playerData.CoinsCount = PlayerDataManager.LoadPlayerData().CoinsCount + _pickedCoinsCount;
+
+                        PlayerDataManager.SavePlayerData(playerData);
+                    }
+
+                    GameDataManager.DeleteSave();
 
                     _gameOverPanel.Appear();
                 }
