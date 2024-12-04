@@ -36,7 +36,7 @@ public class GameplayManager : MonoBehaviour
     private void Start()
     {
         _rows = new List<Row>();
-
+        Debug.LogError(PlayerDataManager.LoadPlayerData().BestScore);
         CreatePools();
         LoadGame();
 
@@ -385,18 +385,29 @@ public class GameplayManager : MonoBehaviour
             {
                 if (IsLosed())
                 {
-                    int score = ScoreManager.Instance.BrickDestroyCount;
+                    PlayerData playerData = PlayerDataManager.LoadPlayerData();
 
-                    if (score > PlayerDataManager.LoadPlayerData().BestScore)
+                    int score = ScoreManager.Instance.BrickDestroyCount;
+                    bool isNeedSavePlayerData = false;
+
+                    if (score > playerData.BestScore)
                     {
-                        PlayerDataManager.SavePlayerData(new PlayerData(score));
+                        playerData.BestScore = score;
+
+                        isNeedSavePlayerData = true;
                     }
+
+                    int coinsCount = playerData.CoinsCount;
 
                     if (_pickedCoinsCount > 0)
                     {
-                        PlayerData playerData = new PlayerData();
-                        playerData.CoinsCount = PlayerDataManager.LoadPlayerData().CoinsCount + _pickedCoinsCount;
+                        playerData.CoinsCount += _pickedCoinsCount;
 
+                        isNeedSavePlayerData = true;
+                    }
+
+                    if (isNeedSavePlayerData)
+                    {
                         PlayerDataManager.SavePlayerData(playerData);
                     }
 
