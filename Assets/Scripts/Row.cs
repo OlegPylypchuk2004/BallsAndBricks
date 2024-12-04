@@ -8,6 +8,7 @@ public class Row : MonoBehaviour
 
     private List<Brick> _bricks;
     private List<PickupableBall> _pickupableBalls;
+    private List<PickupableCoin> _pickupableCoins;
 
     public event Action<Row> AllBricksBrokeDown;
 
@@ -15,10 +16,12 @@ public class Row : MonoBehaviour
     {
         _bricks = new List<Brick>();
         _pickupableBalls = new List<PickupableBall>();
+        _pickupableCoins = new List<PickupableCoin>();
     }
 
     public Brick[] Bricks => _bricks.ToArray();
     public PickupableBall[] PickupableBalls => _pickupableBalls.ToArray();
+    public PickupableCoin[] PickupableCoins => _pickupableCoins.ToArray();
     public Transform[] Points => _points;
 
     public void AddBrick(Brick brick)
@@ -31,6 +34,12 @@ public class Row : MonoBehaviour
     {
         _pickupableBalls.Add(pickupableBall);
         pickupableBall.Picked += OnPickupableBallPicked;
+    }
+
+    public void AddPickupableCoin(PickupableCoin pickupableCoin)
+    {
+        _pickupableCoins.Add(pickupableCoin);
+        pickupableCoin.Picked += OnPickupableCoinPicked;
     }
 
     private void OnBrickBrokeDown(Brick brick)
@@ -48,5 +57,11 @@ public class Row : MonoBehaviour
     {
         _pickupableBalls.Remove((PickupableBall)pickupableBall);
         pickupableBall.Picked -= OnPickupableBallPicked;
+    }
+
+    private void OnPickupableCoinPicked(PickupableItem pickupableCoin)
+    {
+        _pickupableCoins.Remove((PickupableCoin)pickupableCoin);
+        pickupableCoin.Picked -= OnPickupableBallPicked;
     }
 }

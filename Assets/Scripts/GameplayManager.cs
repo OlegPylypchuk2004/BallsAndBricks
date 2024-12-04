@@ -117,12 +117,12 @@ public class GameplayManager : MonoBehaviour
                 {
                     isSpawnCoin = false;
 
-                    PickupableItem pickupableCoint = _pickupableCoinPool.GetObject();
-                    pickupableCoint.transform.SetParent(row.transform);
-                    pickupableCoint.transform.position = point.position;
-                    pickupableCoint.Picked += OnPickupableCoinPicked;
+                    PickupableItem pickupableCoin = _pickupableCoinPool.GetObject();
+                    pickupableCoin.transform.SetParent(row.transform);
+                    pickupableCoin.transform.position = point.position;
+                    pickupableCoin.Picked += OnPickupableCoinPicked;
 
-                    //row.AddPickupableBall((PickupableBall)pickupableBall);
+                    row.AddPickupableCoin((PickupableCoin)pickupableCoin);
                 }
                 else
                 {
@@ -171,11 +171,19 @@ public class GameplayManager : MonoBehaviour
 
             for (int i = 0; i < row.PickupableBalls.Length; i++)
             {
-                PickupableBallData pickupableBallData = new PickupableBallData(row.PickupableBalls[0].transform.position);
+                PickupableBallData pickupableBallData = new PickupableBallData(row.PickupableBalls[i].transform.position);
                 pickupableBallDatas.Add(pickupableBallData);
             }
 
-            RowData rowData = new RowData(row.transform.position, brickDatas.ToArray(), pickupableBallDatas.ToArray());
+            List<PickupableCoinData> pickupableCoinDatas = new List<PickupableCoinData>();
+
+            for (int i = 0; i < row.PickupableCoins.Length; i++)
+            {
+                PickupableCoinData pickupableCoinData = new PickupableCoinData(row.PickupableCoins[i].transform.position);
+                pickupableCoinDatas.Add(pickupableCoinData);
+            }
+
+            RowData rowData = new RowData(row.transform.position, brickDatas.ToArray(), pickupableBallDatas.ToArray(), pickupableCoinDatas.ToArray());
             gameData.SaveRow(rowData);
         }
 
@@ -223,6 +231,16 @@ public class GameplayManager : MonoBehaviour
                     pickupableBall.Picked += OnPickupableBallPicked;
 
                     row.AddPickupableBall(pickupableBall);
+                }
+
+                foreach (PickupableCoinData pickupableCoinData in rowData.PickupableCoinDatas)
+                {
+                    PickupableCoin pickupableCoin = (PickupableCoin)_pickupableCoinPool.GetObject();
+                    pickupableCoin.transform.SetParent(row.transform);
+                    pickupableCoin.transform.localPosition = new Vector2(pickupableCoinData.Position.x, 0f);
+                    pickupableCoin.Picked += OnPickupableCoinPicked;
+
+                    row.AddPickupableCoin(pickupableCoin);
                 }
 
                 row.AllBricksBrokeDown += OnRowsAllBricksBrokeDown;
