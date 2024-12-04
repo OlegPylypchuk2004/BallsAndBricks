@@ -1,4 +1,5 @@
 using DG.Tweening;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,6 @@ public class GameplayManager : MonoBehaviour
     [SerializeField] private GameOverPanel _gameOverPanel;
     [SerializeField] private SceneChanger _sceneChanger;
     [SerializeField] private Button _speedUpButton;
-    [SerializeField] private TextMeshProUGUI _coinsCountText;
 
     private ObjectPool<Row> _rowsPool;
     private ObjectPool<Brick> _bricksPool;
@@ -30,6 +30,8 @@ public class GameplayManager : MonoBehaviour
     private bool _isPaused;
     private Coroutine _showSpeedUpButtonCoroutine;
     private Coroutine _instantReturnBallsCoroutine;
+
+    public event Action<int> PickedCoinsCountChanged;
 
     private void Start()
     {
@@ -69,8 +71,6 @@ public class GameplayManager : MonoBehaviour
             _sceneChanger.LoadCurrent();
         }
 #endif
-
-        _coinsCountText.text = $"{_pickedCoinsCount}";
     }
 
     private void CreatePools()
@@ -96,13 +96,13 @@ public class GameplayManager : MonoBehaviour
         Row row = _rowsPool.GetObject();
         row.transform.position = new Vector2(0f, 3.5f);
 
-        int pointsCount = Random.Range(5, row.Points.Length);
+        int pointsCount = UnityEngine.Random.Range(5, row.Points.Length);
         List<Transform> randomBricksPoints = row.Points
-            .OrderBy(_ => Random.value)
+            .OrderBy(_ => UnityEngine.Random.value)
             .Take(pointsCount)
             .ToList();
 
-        bool isSpawnCoin = Random.Range(0, 10) >= 5;
+        bool isSpawnCoin = UnityEngine.Random.Range(0, 10) >= 5;
 
         for (int i = 0; i < randomBricksPoints.Count; i++)
         {
@@ -135,7 +135,7 @@ public class GameplayManager : MonoBehaviour
                     Brick brick = _bricksPool.GetObject();
                     brick.transform.SetParent(row.transform);
                     brick.transform.position = point.position;
-                    brick.Number = Mathf.Clamp(ScoreManager.Instance.BrickMovesCount + Random.Range(0, 5), 1, int.MaxValue);
+                    brick.Number = Mathf.Clamp(ScoreManager.Instance.BrickMovesCount + UnityEngine.Random.Range(0, 5), 1, int.MaxValue);
                     brick.BrokeDown += OnBrickBrokeDown;
 
                     row.AddBrick(brick);
@@ -204,6 +204,7 @@ public class GameplayManager : MonoBehaviour
         ScoreManager.Instance.Initialize(gameData.BrickMovesCount, gameData.BrickDestroyCount);
 
         _pickedCoinsCount = gameData.PickedCoinsCount;
+        PickedCoinsCountChanged?.Invoke(_pickedCoinsCount);
 
         _ballLauncher.SpawnBall(gameData.BallsCount);
         _ballLauncher.Initilize(gameData.HorizontalBallsPosition);
@@ -315,6 +316,8 @@ public class GameplayManager : MonoBehaviour
         _pickupableCoinPool.ReturnObject(pickupableCoin);
 
         _pickedCoinsCount++;
+
+        PickedCoinsCountChanged?.Invoke(_pickedCoinsCount);
     }
 
     private Tween PlayMoveRowsAnimation()
