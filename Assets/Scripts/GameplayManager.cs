@@ -155,6 +155,7 @@ public class GameplayManager : MonoBehaviour
         gameData.BrickMovesCount = ScoreManager.Instance.BrickMovesCount;
         gameData.BrickDestroyCount = ScoreManager.Instance.BrickDestroyCount;
         gameData.BallsCount = _ballLauncher.BallsCount;
+        gameData.PickedCoinsCount = _pickedCoinsCount;
         gameData.HorizontalBallsPosition = _ballLauncher.HorizontalBallsPosition;
 
         foreach (Row row in _rows)
@@ -304,7 +305,7 @@ public class GameplayManager : MonoBehaviour
 
     private void OnPickupableCoinPicked(PickupableItem pickupableCoin)
     {
-        pickupableCoin.Picked -= OnPickupableBallPicked;
+        pickupableCoin.Picked -= OnPickupableCoinPicked;
         _pickupableCoinPool.ReturnObject(pickupableCoin);
 
         _pickedCoinsCount++;
@@ -357,8 +358,6 @@ public class GameplayManager : MonoBehaviour
         _pickedBallsCount = 0;
 
         ScoreManager.Instance.AddBrickMove();
-
-        GameDataManager.LoadGameData().PickedCoinsCount = _pickedCoinsCount;
 
         PlayMoveRowsAnimation()
             .OnComplete(() =>
@@ -465,4 +464,6 @@ public class GameplayManager : MonoBehaviour
 
         Time.timeScale = 2f;
     }
+
+    public int PickedCoinsCount => _pickedCoinsCount;
 }

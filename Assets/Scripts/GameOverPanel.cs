@@ -9,6 +9,7 @@ public class GameOverPanel : Panel
     [SerializeField] private TextMeshProUGUI _titleText;
     [SerializeField] private TextMeshProUGUI _scoreText;
     [SerializeField] private TextMeshProUGUI _bestScoreText;
+    [SerializeField] private TextMeshProUGUI _coinsCountText;
     [SerializeField] private Button _continueButton;
     [SerializeField] private Button _closeButton;
 
@@ -16,18 +17,29 @@ public class GameOverPanel : Panel
     {
         int score = ScoreManager.Instance.BrickDestroyCount;
         int bestScore = PlayerDataManager.LoadPlayerData().BestScore;
+        int coinsCount = _gameplayManager.PickedCoinsCount;
 
         if (score >= bestScore)
         {
             _titleText.text = "New best score!";
+            _bestScoreText.text = $"{score}";
         }
         else
         {
             _titleText.text = "Game over";
+            _bestScoreText.text = $"{bestScore}";
         }
 
         _scoreText.text = $"{score}";
-        _bestScoreText.text = $"{bestScore}";
+
+        if (coinsCount > 0)
+        {
+            _coinsCountText.text = $"+{coinsCount}";
+        }
+        else
+        {
+            _coinsCountText.text = $"{coinsCount}";
+        }
 
         return base.Appear();
     }

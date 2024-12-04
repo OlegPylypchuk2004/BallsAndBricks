@@ -6,8 +6,8 @@ public class GameData
 {
     public int BrickMovesCount;
     public int BrickDestroyCount;
-    public int PickedCoinsCount;
     public int BallsCount;
+    public int PickedCoinsCount;
     public float HorizontalBallsPosition;
     public List<RowData> RowDatas;
 
