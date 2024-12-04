@@ -7,7 +7,7 @@ public class Panel : MonoBehaviour
     [SerializeField] private RectTransform _panelRectTransform;
     [SerializeField] private CanvasGroup _canvasGroup;
 
-    public Sequence Appear()
+    public virtual Sequence Appear()
     {
         gameObject.SetActive(true);
         _canvasGroup.interactable = false;
@@ -42,7 +42,7 @@ public class Panel : MonoBehaviour
         return appearSequence;
     }
 
-    public Sequence Disappear()
+    public virtual Sequence Disappear()
     {
         _canvasGroup.interactable = false;
 

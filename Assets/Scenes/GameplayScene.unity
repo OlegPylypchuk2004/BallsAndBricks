@@ -5570,7 +5570,7 @@ MonoBehaviour:
   _canvasGroup: {fileID: 610120450}
   _gameplayManager: {fileID: 2101977873}
   _titleText: {fileID: 2085803284}
-  _scoreText: {fileID: 2002378265}
+  _scoreText: {fileID: 2078477502}
   _bestScoreText: {fileID: 84152062}
   _continueButton: {fileID: 1564635117}
   _closeButton: {fileID: 498709747}

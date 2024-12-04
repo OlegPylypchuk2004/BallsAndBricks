@@ -12,10 +12,10 @@ public class GameOverPanel : Panel
     [SerializeField] private Button _continueButton;
     [SerializeField] private Button _closeButton;
 
-    private void OnEnable()
+    public override Sequence Appear()
     {
         int score = ScoreManager.Instance.BrickDestroyCount;
-        int bestScore = 120;
+        int bestScore = PlayerDataManager.LoadPlayerData().BestScore;
 
         if (score >= bestScore)
         {
@@ -28,6 +28,8 @@ public class GameOverPanel : Panel
 
         _scoreText.text = $"{score}";
         _bestScoreText.text = $"{bestScore}";
+
+        return base.Appear();
     }
 
     protected override void SubscribeOnEvents()

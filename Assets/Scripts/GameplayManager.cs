@@ -314,6 +314,13 @@ public class GameplayManager : MonoBehaviour
             {
                 if (IsLosed())
                 {
+                    int score = ScoreManager.Instance.BrickDestroyCount;
+
+                    if (score > PlayerDataManager.LoadPlayerData().BestScore)
+                    {
+                        PlayerDataManager.SavePlayerData(new PlayerData(score));
+                    }
+
                     _gameOverPanel.Appear();
                 }
                 else
