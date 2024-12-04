@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using UnityEngine;
 
 public class Ball : MonoBehaviour
@@ -37,6 +36,10 @@ public class Ball : MonoBehaviour
         if (collision.gameObject.TryGetComponent(out Brick brick))
         {
             brick.Hit();
+        }
+        else if (collision.gameObject.CompareTag("BottomMapBorder"))
+        {
+            Fall();
         }
     }
 
