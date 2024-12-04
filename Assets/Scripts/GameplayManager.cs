@@ -96,7 +96,7 @@ public class GameplayManager : MonoBehaviour
         Row row = _rowsPool.GetObject();
         row.transform.position = new Vector2(0f, 3.5f);
 
-        int pointsCount = UnityEngine.Random.Range(5, row.Points.Length);
+        int pointsCount = UnityEngine.Random.Range(6, row.Points.Length);
         List<Transform> randomBricksPoints = row.Points
             .OrderBy(_ => UnityEngine.Random.value)
             .Take(pointsCount)
@@ -135,7 +135,7 @@ public class GameplayManager : MonoBehaviour
                     Brick brick = _bricksPool.GetObject();
                     brick.transform.SetParent(row.transform);
                     brick.transform.position = point.position;
-                    brick.Number = Mathf.Clamp(ScoreManager.Instance.BrickMovesCount + UnityEngine.Random.Range(0, 0), 1, int.MaxValue);
+                    brick.Number = Mathf.Clamp(ScoreManager.Instance.BrickMovesCount + UnityEngine.Random.Range(0, 5), 1, int.MaxValue);
                     brick.BrokeDown += OnBrickBrokeDown;
 
                     row.AddBrick(brick);
