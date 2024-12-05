@@ -96,13 +96,13 @@ public class GameplayManager : MonoBehaviour
         Row row = _rowsPool.GetObject();
         row.transform.position = new Vector2(0f, 3.5f);
 
-        int pointsCount = UnityEngine.Random.Range(6, row.Points.Length);
+        int pointsCount = UnityEngine.Random.Range(5, row.Points.Length);
         List<Transform> randomBricksPoints = row.Points
             .OrderBy(_ => UnityEngine.Random.value)
             .Take(pointsCount)
             .ToList();
 
-        bool isSpawnPickupableBall = UnityEngine.Random.Range(0, 10) >= 3;
+        bool isSpawnPickupableBall = UnityEngine.Random.Range(0, 10) >= 2;
         bool isSpawnCoin = UnityEngine.Random.Range(0, 10) >= 5;
 
         for (int i = 0; i < randomBricksPoints.Count; i++)
