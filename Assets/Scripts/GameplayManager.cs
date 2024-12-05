@@ -27,6 +27,7 @@ public class GameplayManager : MonoBehaviour
     private int _pickedBallsCount;
     private int _pickedCoinsCount;
     private bool _isPaused;
+    private bool _isLockSaveGameData;
     private Coroutine _showSpeedUpButtonCoroutine;
     private Coroutine _instantReturnBallsCoroutine;
 
@@ -401,6 +402,8 @@ public class GameplayManager : MonoBehaviour
             {
                 if (IsLosed())
                 {
+                    _isLockSaveGameData = true;
+
                     PlayerData playerData = PlayerDataManager.LoadPlayerData();
 
                     int score = ScoreManager.Instance.BrickDestroyCount;
@@ -434,7 +437,11 @@ public class GameplayManager : MonoBehaviour
                 else
                 {
                     SpawnRow();
-                    SaveGame();
+
+                    if (!_isLockSaveGameData)
+                    {
+                        SaveGame();
+                    }
 
                     _isCanLaunchBalls = true;
                     _ballLauncher.LaunchStarted += OnLaunchStarted;
