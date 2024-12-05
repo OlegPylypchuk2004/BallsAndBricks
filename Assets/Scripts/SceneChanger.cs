@@ -18,7 +18,10 @@ public class SceneChanger : MonoBehaviour
 
         yield return new WaitForSeconds(0.25f);
 
-        _eventSystem.gameObject.SetActive(true);
+        if (_eventSystem != null)
+        {
+            _eventSystem.gameObject.SetActive(true);
+        }
     }
 
     public void LoadByName(string sceneName)
@@ -63,7 +66,10 @@ public class SceneChanger : MonoBehaviour
 
     private IEnumerator DelayBeforeLoad()
     {
-        _eventSystem.gameObject.SetActive(false);
+        if (_eventSystem != null)
+        {
+            _eventSystem.gameObject.SetActive(false);
+        }
 
         PlayAppearAnimation();
 
