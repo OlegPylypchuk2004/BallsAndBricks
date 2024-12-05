@@ -2489,6 +2489,8 @@ MonoBehaviour:
   _blurController: {fileID: 1888847468}
   _panelRectTransform: {fileID: 1856062536}
   _canvasGroup: {fileID: 1856062539}
+  _appearSound: {fileID: 8300000, guid: e8a4fc96813dbfa4ba39f01323f8df01, type: 3}
+  _disappearSound: {fileID: 8300000, guid: 0e143da1f6dcd9a4ba04144084054d3d, type: 3}
   _continueButton: {fileID: 1083024592}
   _restartButton: {fileID: 1390340978}
   _menuButton: {fileID: 1150864022}
@@ -4912,6 +4914,8 @@ MonoBehaviour:
   _blurController: {fileID: 1888847468}
   _panelRectTransform: {fileID: 156524576}
   _canvasGroup: {fileID: 156524577}
+  _appearSound: {fileID: 8300000, guid: e8a4fc96813dbfa4ba39f01323f8df01, type: 3}
+  _disappearSound: {fileID: 8300000, guid: 0e143da1f6dcd9a4ba04144084054d3d, type: 3}
   _confirmButton: {fileID: 515610103}
   _cancelButton: {fileID: 156094401}
   _closeButton: {fileID: 897006428}
@@ -6091,6 +6095,8 @@ MonoBehaviour:
   _blurController: {fileID: 1888847468}
   _panelRectTransform: {fileID: 610120449}
   _canvasGroup: {fileID: 610120450}
+  _appearSound: {fileID: 8300000, guid: e8a4fc96813dbfa4ba39f01323f8df01, type: 3}
+  _disappearSound: {fileID: 8300000, guid: 0e143da1f6dcd9a4ba04144084054d3d, type: 3}
   _gameplayManager: {fileID: 2101977873}
   _titleText: {fileID: 2085803284}
   _scoreText: {fileID: 2078477502}
