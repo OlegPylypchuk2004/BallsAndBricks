@@ -8,6 +8,7 @@ public class Panel : MonoBehaviour
     [SerializeField] private CanvasGroup _canvasGroup;
     [SerializeField] private AudioClip _appearSound;
     [SerializeField] private AudioClip _disappearSound;
+    [SerializeField] private bool _isPlaySound;
 
     public virtual Sequence Appear()
     {
@@ -16,7 +17,10 @@ public class Panel : MonoBehaviour
         _canvasGroup.alpha = 0f;
         _blurController.Intensity = 0f;
 
-        SoundManager.Instance.PlayAudioClip(_appearSound);
+        if (_isPlaySound)
+        {
+            SoundManager.Instance.PlayAudioClip(_appearSound);
+        }
 
         Sequence appearSequence = DOTween.Sequence();
 
@@ -50,7 +54,10 @@ public class Panel : MonoBehaviour
     {
         _canvasGroup.interactable = false;
 
-        SoundManager.Instance.PlayAudioClip(_disappearSound);
+        if (_isPlaySound)
+        {
+            SoundManager.Instance.PlayAudioClip(_disappearSound);
+        }
 
         UnsubscribeOnEvents();
 
