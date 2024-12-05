@@ -465,4 +465,4 @@ MonoBehaviour:
     m_ColorSpace: -1
     m_NumColorKeys: 7
     m_NumAlphaKeys: 2
-  _particleSystem: {fileID: 8280154864027895894, guid: 4a62112986467444b8be915d2284278d, type: 3}
+  _hitSound: {fileID: 8300000, guid: c75aea1f34bf7e640b90a6f89aa078ba, type: 3}

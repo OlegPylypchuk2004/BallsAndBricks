@@ -9,6 +9,7 @@ public class Brick : MonoBehaviour
     [SerializeField] private SpriteRenderer _backgroundSpriteRenderer;
     [SerializeField] private SpriteRenderer _gradientMaskSpriteRenderer;
     [SerializeField] private Gradient _colorGradient;
+    [SerializeField] private AudioClip _hitSound;
 
     private int _number;
     private Tween _textAnimation;
@@ -67,6 +68,8 @@ public class Brick : MonoBehaviour
     public void Hit()
     {
         _number--;
+
+        SoundManager.Instance.PlayAudioClip(_hitSound);
 
         if (_number <= 0)
         {
