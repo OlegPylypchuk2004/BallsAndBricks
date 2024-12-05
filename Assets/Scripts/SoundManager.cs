@@ -20,6 +20,11 @@ public class SoundManager : MonoBehaviour
 
     public void PlayAudioClip(AudioClip audioClip)
     {
+        if (PlayerDataManager.LoadPlayerData().IsSoundDisabled)
+        {
+            return;
+        }
+
         _audioSource.PlayOneShot(audioClip);
     }
 }

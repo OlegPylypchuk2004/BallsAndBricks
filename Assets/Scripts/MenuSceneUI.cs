@@ -5,6 +5,7 @@ using UnityEngine.UI;
 public class MenuSceneUI : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI _bestScoreText;
+    [SerializeField] private AudioClip _buttonClickSound;
     [SerializeField] private Button _soundButton;
     [SerializeField] private Image _soundButtonImage;
     [SerializeField] private Sprite _enabledSoundButtonSprite;
@@ -14,7 +15,14 @@ public class MenuSceneUI : MonoBehaviour
     {
         _bestScoreText.text = $"{PlayerDataManager.LoadPlayerData().BestScore}";
 
-        UpdateSoundButtonView(!PlayerDataManager.LoadPlayerData().IsSoundDisabled);
+        if (!PlayerDataManager.LoadPlayerData().IsSoundDisabled)
+        {
+            _soundButtonImage.sprite = _enabledSoundButtonSprite;
+        }
+        else
+        {
+            _soundButtonImage.sprite = _disabledSoundButtonSprite;
+        }
     }
 
     private void OnEnable()
@@ -47,5 +55,7 @@ public class MenuSceneUI : MonoBehaviour
         {
             _soundButtonImage.sprite = _disabledSoundButtonSprite;
         }
+
+        SoundManager.Instance.PlayAudioClip(_buttonClickSound);
     }
 }

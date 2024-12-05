@@ -1764,6 +1764,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _bestScoreText: {fileID: 437133668}
+  _buttonClickSound: {fileID: 8300000, guid: 0ee9f2cd4b424624ea333489e46db5bb, type: 3}
   _soundButton: {fileID: 1324120037}
   _soundButtonImage: {fileID: 1324120035}
   _enabledSoundButtonSprite: {fileID: 21300000, guid: c508fb2bc466031499d73748f745ac3e, type: 3}
