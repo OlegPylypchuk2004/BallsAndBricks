@@ -20,24 +20,22 @@ public class GameOverPanel : Panel
         PlayerData playerData = PlayerDataManager.LoadPlayerData();
 
         int bestScore = playerData.BestScore;
-        int coinsCount = playerData.CoinsCount;
 
         if (score >= bestScore)
         {
             _titleText.text = "New best score!";
-            _bestScoreText.text = $"{score}";
         }
         else
         {
             _titleText.text = "Game over";
-            _bestScoreText.text = $"{bestScore}";
         }
 
-        _scoreText.text = $"{score}";
-
-        _coinsCountText.text = $"{coinsCount}";
-
-        return base.Appear();
+        return base.Appear().OnComplete(() =>
+        {
+            ShowBestScore(Mathf.Max(score, bestScore));
+            ShowScore(score);
+            ShowCoinsCount(playerData.CoinsCount);
+        });
     }
 
     protected override void SubscribeOnEvents()
@@ -70,5 +68,40 @@ public class GameOverPanel : Panel
         {
             _gameplayManager.RestartGame();
         });
+    }
+
+    private void ShowScore(int number)
+    {
+        int currentNumber = 0;
+
+        DOTween.To(() => currentNumber, x => currentNumber = x, number, 0.5f)
+            .SetEase(Ease.Linear)
+            .OnUpdate(() =>
+            {
+                _scoreText.text = $"{currentNumber}";
+            });
+    }
+    private void ShowBestScore(int number)
+    {
+        int currentNumber = 0;
+
+        DOTween.To(() => currentNumber, x => currentNumber = x, number, 0.5f)
+            .SetEase(Ease.Linear)
+            .OnUpdate(() =>
+            {
+                _bestScoreText.text = $"{currentNumber}";
+            });
+    }
+
+    private void ShowCoinsCount(int count)
+    {
+        int currentNumber = 0;
+
+        DOTween.To(() => currentNumber, x => currentNumber = x, count, 0.5f)
+            .SetEase(Ease.Linear)
+            .OnUpdate(() =>
+            {
+                _coinsCountText.text = $"{currentNumber}";
+            });
     }
 }
