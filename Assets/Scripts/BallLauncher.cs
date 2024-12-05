@@ -80,13 +80,13 @@ public class BallLauncher : MonoBehaviour
         {
             if (Input.GetMouseButton(0))
             {
-                _target.gameObject.SetActive(true);
-                _target.transform.position = _firstFallenBallPosition;
-
                 Debug.DrawRay(_balls[0].transform.position, direction);
 
                 float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
                 _target.transform.rotation = Quaternion.Euler(0, 0, angle - 90f);
+
+                _target.gameObject.SetActive(true);
+                _target.transform.position = _firstFallenBallPosition;
             }
             else
             {
