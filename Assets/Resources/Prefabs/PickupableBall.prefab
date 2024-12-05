@@ -85,6 +85,7 @@ MonoBehaviour:
   _outlineSpriteRenderer: {fileID: 3821757223072980431}
   _circleTransform: {fileID: 8651765747244952862}
   _pickedAnimationPrefab: {fileID: 8169875775489423496, guid: 078e7c74a6450ce4293a16a4db1df635, type: 3}
+  _pickupSound: {fileID: 8300000, guid: 8206edd06b7cf0942a716b08a1e691d6, type: 3}
 --- !u!1 &5404114854624476127
 GameObject:
   m_ObjectHideFlags: 0

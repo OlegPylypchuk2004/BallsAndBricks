@@ -6,6 +6,7 @@ public class PickupableBall : PickupableItem
     [SerializeField] private SpriteRenderer _outlineSpriteRenderer;
     [SerializeField] private Transform _circleTransform;
     [SerializeField] private PickupableBallPickedAnimation _pickedAnimationPrefab;
+    [SerializeField] private AudioClip _pickupSound;
 
     private void OnEnable()
     {
@@ -30,6 +31,8 @@ public class PickupableBall : PickupableItem
         PickupableBallPickedAnimation pickedAnimation = Instantiate(_pickedAnimationPrefab);
         pickedAnimation.transform.position = transform.position;
         pickedAnimation.SetOutlineRotation(_outlineSpriteRenderer.transform.eulerAngles);
+
+        SoundManager.Instance.PlayAudioClip(_pickupSound);
 
         base.Pickup();
     }
