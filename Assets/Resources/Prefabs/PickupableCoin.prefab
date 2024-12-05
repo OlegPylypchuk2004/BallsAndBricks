@@ -83,6 +83,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _spriteRenderer: {fileID: 3821757223072980431}
   _pickedAnimationPrefab: {fileID: 6372694410082772876, guid: 907345c5e1638c345ac1c8769cbd52ad, type: 3}
+  _pickupSound: {fileID: 8300000, guid: 4bef24e83a0af964791b36f06886d350, type: 3}
 --- !u!1 &5404114854624476127
 GameObject:
   m_ObjectHideFlags: 0

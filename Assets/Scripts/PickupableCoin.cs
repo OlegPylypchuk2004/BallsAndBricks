@@ -5,6 +5,7 @@ public class PickupableCoin : PickupableItem
 {
     [SerializeField] private SpriteRenderer _spriteRenderer;
     [SerializeField] private PickupableCoinPickedAnimation _pickedAnimationPrefab;
+    [SerializeField] private AudioClip _pickupSound;
 
     private void OnEnable()
     {
@@ -26,6 +27,8 @@ public class PickupableCoin : PickupableItem
     {
         PickupableCoinPickedAnimation pickedAnimation = Instantiate(_pickedAnimationPrefab);
         pickedAnimation.transform.position = transform.position;
+
+        SoundManager.Instance.PlayAudioClip(_pickupSound);
 
         base.Pickup();
     }
