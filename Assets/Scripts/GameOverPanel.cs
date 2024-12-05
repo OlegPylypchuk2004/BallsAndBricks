@@ -16,8 +16,11 @@ public class GameOverPanel : Panel
     public override Sequence Appear()
     {
         int score = ScoreManager.Instance.BrickDestroyCount;
-        int bestScore = PlayerDataManager.LoadPlayerData().BestScore;
-        int coinsCount = _gameplayManager.PickedCoinsCount;
+
+        PlayerData playerData = PlayerDataManager.LoadPlayerData();
+
+        int bestScore = playerData.BestScore;
+        int coinsCount = playerData.CoinsCount;
 
         if (score >= bestScore)
         {
@@ -32,14 +35,7 @@ public class GameOverPanel : Panel
 
         _scoreText.text = $"{score}";
 
-        if (coinsCount > 0)
-        {
-            _coinsCountText.text = $"+{coinsCount}";
-        }
-        else
-        {
-            _coinsCountText.text = $"{coinsCount}";
-        }
+        _coinsCountText.text = $"{coinsCount}";
 
         return base.Appear();
     }
