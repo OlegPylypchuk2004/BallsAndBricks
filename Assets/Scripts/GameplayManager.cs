@@ -102,13 +102,14 @@ public class GameplayManager : MonoBehaviour
             .Take(pointsCount)
             .ToList();
 
+        bool isSpawnPickupableBall = UnityEngine.Random.Range(0, 10) >= 3;
         bool isSpawnCoin = UnityEngine.Random.Range(0, 10) >= 5;
 
         for (int i = 0; i < randomBricksPoints.Count; i++)
         {
             Transform point = randomBricksPoints[i];
 
-            if (i == 0)
+            if (i == 0 && isSpawnPickupableBall)
             {
                 PickupableItem pickupableBall = _pickupableBallPool.GetObject();
                 pickupableBall.transform.SetParent(row.transform);
