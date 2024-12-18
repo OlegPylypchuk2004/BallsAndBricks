@@ -383,8 +383,6 @@ public class GameplayManager : MonoBehaviour
     private void OnLaunchFinished()
     {
         _ballLauncher.LaunchFinished -= OnLaunchFinished;
-
-        _instantReturnBallsCoroutine = StartCoroutine(InstantReturnBalls());
     }
 
     private void OnBallsFallen()
@@ -527,13 +525,6 @@ public class GameplayManager : MonoBehaviour
 
         _speedUpButton.gameObject.SetActive(true);
         _speedUpButton.onClick.AddListener(OnSpeedUpButtonClicked);
-    }
-
-    private IEnumerator InstantReturnBalls()
-    {
-        yield return new WaitForSeconds(30f);
-
-        _ballLauncher.InstantReturnBalls();
     }
 
     private void OnSpeedUpButtonClicked()

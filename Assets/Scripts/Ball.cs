@@ -8,7 +8,9 @@ public class Ball : MonoBehaviour
 
     private bool _isLaunched;
 
+
     public event Action<Ball, Vector2> Fallen;
+    public event Action BrickHitted;
 
     private void FixedUpdate()
     {
@@ -36,6 +38,8 @@ public class Ball : MonoBehaviour
         if (collision.gameObject.TryGetComponent(out Brick brick))
         {
             brick.Hit();
+
+            BrickHitted?.Invoke();
         }
         else if (collision.gameObject.CompareTag("BottomMapBorder"))
         {
@@ -62,5 +66,10 @@ public class Ball : MonoBehaviour
         transform.position = targetPosition;
 
         Fallen?.Invoke(this, transform.position);
+    }
+
+    public void InstantFall()
+    {
+        Fall();
     }
 }
