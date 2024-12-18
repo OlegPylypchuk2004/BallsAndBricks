@@ -20,7 +20,7 @@ public class BallLauncher : MonoBehaviour
     private Vector2 _tapPosition;
     private Vector2 _launchDirection;
 
-    public event Action LaunchStarted;
+    public event Action<Vector2> LaunchStarted;
     public event Action LaunchFinished;
     public event Action BallsFallen;
 
@@ -142,7 +142,7 @@ public class BallLauncher : MonoBehaviour
 
     private IEnumerator Launch(Vector2 direction)
     {
-        LaunchStarted?.Invoke();
+        LaunchStarted?.Invoke(direction);
 
         int notLaunchedBallsCount = _balls.Count;
 
@@ -229,5 +229,10 @@ public class BallLauncher : MonoBehaviour
         {
             ball.transform.position = targetBallsPosition;
         }
+    }
+
+    public void AutoLaunch(Vector2 direction)
+    {
+        StartCoroutine(Launch(direction));
     }
 }

@@ -45,6 +45,13 @@ public class GameplayManager : MonoBehaviour
         _ballLauncher.LaunchFinished += OnLaunchFinished;
 
         _pauseButton.onClick.AddListener(OnPauseButtonClicked);
+
+        GameData gameData = GameDataManager.LoadGameData();
+
+        if (gameData.BrickDestroyCount > 0 && gameData.LaunchDirection != Vector2.zero)
+        {
+            _ballLauncher.AutoLaunch(gameData.LaunchDirection);
+        }
     }
 
     private void OnDestroy()
@@ -164,6 +171,7 @@ public class GameplayManager : MonoBehaviour
         gameData.BallsCount = _ballLauncher.BallsCount;
         gameData.PickedCoinsCount = _pickedCoinsCount;
         gameData.HorizontalBallsPosition = _ballLauncher.HorizontalBallsPosition;
+        gameData.LaunchDirection = Vector2.zero;
 
         foreach (Row row in _rows)
         {
@@ -354,7 +362,7 @@ public class GameplayManager : MonoBehaviour
         return moveRowsSequence;
     }
 
-    private void OnLaunchStarted()
+    private void OnLaunchStarted(Vector2 direction)
     {
         _ballLauncher.LaunchStarted -= OnLaunchStarted;
 
@@ -362,6 +370,14 @@ public class GameplayManager : MonoBehaviour
         _ballLauncher.BallsFallen += OnBallsFallen;
 
         _showSpeedUpButtonCoroutine = StartCoroutine(ShowSpeedUpButton());
+
+        if (direction != Vector2.zero)
+        {
+            GameData gameData = GameDataManager.LoadGameData();
+            gameData.LaunchDirection = direction;
+
+            GameDataManager.SaveGameData(gameData);
+        }
     }
 
     private void OnLaunchFinished()
