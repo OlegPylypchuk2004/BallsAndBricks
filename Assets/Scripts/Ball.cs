@@ -16,7 +16,7 @@ public class Ball : MonoBehaviour
         {
             _rigidbody2D.velocity = _rigidbody2D.velocity.normalized * _speed;
 
-            if (transform.position.y < -4.75f)
+            if (transform.position.y < -5f)
             {
                 Fall();
             }
