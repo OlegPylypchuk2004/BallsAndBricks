@@ -11,6 +11,8 @@ public class RatePanel : Panel
     [SerializeField] private string _link;
     [SerializeField] private CanvasGroup _claimButtonCanvasGroup;
     [SerializeField] private TextMeshProUGUI _rewardAlreadyClaimedText;
+    [SerializeField] private GameObject _coinsView;
+    [SerializeField] private RectTransform _starsRectTransform;
 
     public override Sequence Appear()
     {
@@ -21,6 +23,9 @@ public class RatePanel : Panel
             _claimButton.gameObject.SetActive(false);
             _rewardAlreadyClaimedText.gameObject.SetActive(true);
             _rewardAlreadyClaimedText.text = "Reward already claimed";
+
+            _coinsView.SetActive(false);
+            _starsRectTransform.anchoredPosition = Vector3.zero;
         }
         else
         {
