@@ -13,9 +13,14 @@ public class RatePanel : Panel
     [SerializeField] private TextMeshProUGUI _rewardAlreadyClaimedText;
     [SerializeField] private GameObject _coinsView;
     [SerializeField] private RectTransform _starsRectTransform;
+    [SerializeField] private RectTransform[] _starRectTransforms;
+
+    private Sequence _starsSequence;
 
     public override Sequence Appear()
     {
+        PlayStarsAnimation();
+
         bool isRateRewardClaimed = PlayerDataManager.LoadPlayerData().IsRateRewardClaimed;
 
         if (isRateRewardClaimed)
@@ -37,6 +42,13 @@ public class RatePanel : Panel
         }
 
         return base.Appear();
+    }
+
+    public override Sequence Disappear()
+    {
+        DOTween.Kill(_starsSequence);
+
+        return base.Disappear();
     }
 
     protected override void SubscribeOnEvents()
@@ -80,5 +92,23 @@ public class RatePanel : Panel
 
         _claimButton.interactable = true;
         _claimButtonCanvasGroup.alpha = 1f;
+    }
+
+    private void PlayStarsAnimation()
+    {
+        _starsSequence = DOTween.Sequence();
+
+        _starsSequence.AppendInterval(3f);
+
+        foreach (RectTransform starRectTransform in _starRectTransforms)
+        {
+            _starsSequence.Join(
+                starRectTransform.DOPunchScale(Vector3.one * 0.25f, 0.25f)
+                    .SetDelay(0.125f)
+                );
+        }
+
+        _starsSequence.SetLink(gameObject);
+        _starsSequence.SetLoops(-1);
     }
 }
