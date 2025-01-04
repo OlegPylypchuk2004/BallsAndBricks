@@ -163,6 +163,7 @@ GameObject:
   - component: {fileID: 566919474041262332}
   - component: {fileID: 4634011406413861582}
   - component: {fileID: 4081476841971188268}
+  - component: {fileID: 7046987249781198542}
   m_Layer: 0
   m_Name: ChooseBallButton
   m_TagString: Untagged
@@ -292,3 +293,17 @@ MonoBehaviour:
   _outlineSprites:
   - {fileID: 21300000, guid: 46f499d7727932645af3eb5029772ede, type: 3}
   - {fileID: 21300000, guid: f6ff0e968a731f3449a132215a5a2267, type: 3}
+--- !u!114 &7046987249781198542
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8082318607256348767}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87e26e05bc1e680468811914011f2fe1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _button: {fileID: 4634011406413861582}
+  _clickSound: {fileID: 8300000, guid: 0ee9f2cd4b424624ea333489e46db5bb, type: 3}
