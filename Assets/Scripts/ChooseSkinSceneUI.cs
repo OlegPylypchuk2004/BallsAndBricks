@@ -7,7 +7,7 @@ public class ChooseSkinSceneUI : MonoBehaviour
     [SerializeField] private SceneChanger _sceneChanger;
     [SerializeField] private Button _backButton;
     [SerializeField] private ChooseBallButton[] _chooseBallButtons;
-    
+
     private Gradient _ballsColorGradient;
     private int _chosenBallSkinIndex;
 
@@ -36,7 +36,7 @@ public class ChooseSkinSceneUI : MonoBehaviour
                 float t = Mathf.Clamp01((float)i / (_chooseBallButtons.Length - 1));
                 targetColor = _ballsColorGradient.Evaluate(t);
 
-                _chooseBallButtons[i].Initialize(i + 1, targetColor, playerData.PurchausedBallSkinIndexes.Contains(i), i == _chosenBallSkinIndex);
+                _chooseBallButtons[i].Initialize(i + 1, targetColor, playerData.PurchasedBallSkinIndexes.Contains(i), i == _chosenBallSkinIndex);
             }
         }
     }
@@ -61,6 +61,21 @@ public class ChooseSkinSceneUI : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+#if UNITY_EDITOR
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            PlayerDataManager.DeleteSave();
+            _sceneChanger.LoadCurrent();
+        }
+        else if (Input.GetKeyDown(KeyCode.Return))
+        {
+            CoinsManager.Receive(50);
+        }
+#endif
+    }
+
     private void OnBackButtonClicked()
     {
         _sceneChanger.LoadByName("MenuScene");
@@ -69,17 +84,29 @@ public class ChooseSkinSceneUI : MonoBehaviour
     private void OnChooseBallButtonClicked(ChooseBallButton chooseBallButton)
     {
         PlayerData playerData = PlayerDataManager.LoadPlayerData();
+        int newSkinIndex = Array.IndexOf(_chooseBallButtons, chooseBallButton);
 
-        _chooseBallButtons[_chosenBallSkinIndex].Unselect();
-        _chosenBallSkinIndex = Array.IndexOf(_chooseBallButtons, chooseBallButton);
-        _chooseBallButtons[_chosenBallSkinIndex].Select();
-
-        playerData.ChosenBallSkinIndex = _chosenBallSkinIndex;
-        PlayerDataManager.SavePlayerData(playerData);
-
-        if (!playerData.PurchausedBallSkinIndexes.Contains(_chosenBallSkinIndex) && CoinsManager.Spend(25))
+        if (playerData.PurchasedBallSkinIndexes.Contains(newSkinIndex))
         {
-            playerData.PurchausedBallSkinIndexes.Add(_chosenBallSkinIndex);
+            _chooseBallButtons[_chosenBallSkinIndex].Unselect();
+            _chosenBallSkinIndex = newSkinIndex;
+            _chooseBallButtons[_chosenBallSkinIndex].Select();
+
+            playerData.ChosenBallSkinIndex = _chosenBallSkinIndex;
+
+            PlayerDataManager.SavePlayerData(playerData);
+        }
+        else if (CoinsManager.Spend(25))
+        {
+            _chooseBallButtons[_chosenBallSkinIndex].Unselect();
+            _chosenBallSkinIndex = newSkinIndex;
+            _chooseBallButtons[_chosenBallSkinIndex].Select();
+
+            playerData.CoinsCount -= 25;
+            playerData.ChosenBallSkinIndex = _chosenBallSkinIndex;
+            playerData.PurchasedBallSkinIndexes.Add(_chosenBallSkinIndex);
+
+            PlayerDataManager.SavePlayerData(playerData);
         }
     }
 }

@@ -9,10 +9,13 @@ public class PlayerData
     public bool IsSoundDisabled;
     public bool IsRateRewardClaimed;
     public int ChosenBallSkinIndex;
-    public List<int> PurchausedBallSkinIndexes;
+    public List<int> PurchasedBallSkinIndexes;
 
     public PlayerData()
     {
-        PurchausedBallSkinIndexes = new List<int>();
+        PurchasedBallSkinIndexes = new List<int>
+        {
+            0
+        };
     }
 }

@@ -78,7 +78,7 @@ public class ChooseBallButton : MonoBehaviour
     public void Unselect()
     {
         Color targetOutlineColor = Color.white;
-        targetOutlineColor.a = .5f;
+        targetOutlineColor.a = .25f;
 
         _outlineImage.color = targetOutlineColor;
     }
