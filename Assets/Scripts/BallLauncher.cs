@@ -33,10 +33,18 @@ public class BallLauncher : MonoBehaviour
     {
         _balls = new List<Ball>();
 
-        Gradient ballsColorGradient = Resources.Load<BallsColorGradientData>("BallsColorGradient").Gradient;
-
-        float t = Mathf.Clamp01((float)PlayerDataManager.LoadPlayerData().ChosenBallSkinIndex / (26 - 1));
-        _ballsColor = ballsColorGradient.Evaluate(t);
+        int chosenBallSkinIndex = PlayerDataManager.LoadPlayerData().ChosenBallSkinIndex;
+        Debug.LogError(chosenBallSkinIndex);
+        if (chosenBallSkinIndex == 0)
+        {
+            _ballsColor = Color.white;
+        }
+        else
+        {
+            Gradient ballsColorGradient = Resources.Load<BallsColorGradientData>("BallsColorGradient").Gradient;
+            float t = Mathf.Clamp01((float)chosenBallSkinIndex / (26 - 1));
+            _ballsColor = ballsColorGradient.Evaluate(t);
+        }
     }
 
     private void Start()
