@@ -23,6 +23,8 @@ public class BallLauncher : MonoBehaviour
     private float _lastBrickHitTime;
     private bool _isBallsLaunched;
 
+    private Color _ballsColor;
+
     public event Action<Vector2> LaunchStarted;
     public event Action LaunchFinished;
     public event Action BallsFallen;
@@ -30,6 +32,11 @@ public class BallLauncher : MonoBehaviour
     private void Awake()
     {
         _balls = new List<Ball>();
+
+        Gradient ballsColorGradient = Resources.Load<BallsColorGradientData>("BallsColorGradient").Gradient;
+
+        float t = Mathf.Clamp01((float)PlayerDataManager.LoadPlayerData().ChosenBallSkinIndex / (26 - 1));
+        _ballsColor = ballsColorGradient.Evaluate(t);
     }
 
     private void Start()
@@ -84,6 +91,7 @@ public class BallLauncher : MonoBehaviour
         for (int i = 0; i < count; i++)
         {
             Ball ball = _ballsPool.GetObject();
+            ball.SetColor(_ballsColor);
             _balls.Add(ball);
         }
 

@@ -4,10 +4,10 @@ using UnityEngine;
 public class Ball : MonoBehaviour
 {
     [SerializeField] private float _speed;
+    [SerializeField] private SpriteRenderer _spriteRenderer;
     [SerializeField] private Rigidbody2D _rigidbody2D;
 
     private bool _isLaunched;
-
 
     public event Action<Ball, Vector2> Fallen;
     public event Action BrickHitted;
@@ -45,6 +45,11 @@ public class Ball : MonoBehaviour
         {
             Fall();
         }
+    }
+
+    public void SetColor(Color color)
+    {
+        _spriteRenderer.color = color;
     }
 
     public void Launch(Vector2 direction)
