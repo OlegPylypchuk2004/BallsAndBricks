@@ -1,4 +1,5 @@
 using DG.Tweening;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,11 +10,26 @@ public class RatePanel : Panel
     [SerializeField] private Button _rateButton;
     [SerializeField] private string _link;
     [SerializeField] private CanvasGroup _claimButtonCanvasGroup;
+    [SerializeField] private TextMeshProUGUI _rewardAlreadyClaimedText;
 
     public override Sequence Appear()
     {
-        _claimButton.interactable = false;
-        _claimButtonCanvasGroup.alpha = .5f;
+        bool isRateRewardClaimed = PlayerDataManager.LoadPlayerData().IsRateRewardClaimed;
+
+        if (isRateRewardClaimed)
+        {
+            _claimButton.gameObject.SetActive(false);
+            _rewardAlreadyClaimedText.gameObject.SetActive(true);
+            _rewardAlreadyClaimedText.text = "Reward already claimed";
+        }
+        else
+        {
+            _claimButton.gameObject.SetActive(true);
+            _rewardAlreadyClaimedText.gameObject.SetActive(false);
+
+            _claimButton.interactable = false;
+            _claimButtonCanvasGroup.alpha = .5f;
+        }
 
         return base.Appear();
     }
@@ -38,7 +54,14 @@ public class RatePanel : Panel
 
     private void OnClaimButtonClicked()
     {
+        PlayerData playerData = PlayerDataManager.LoadPlayerData();
+        playerData.IsRateRewardClaimed = true;
 
+        PlayerDataManager.SavePlayerData(playerData);
+
+        _claimButton.gameObject.SetActive(false);
+        _rewardAlreadyClaimedText.gameObject.SetActive(true);
+        _rewardAlreadyClaimedText.text = "Reward claimed";
     }
 
     private void OnCloseButtonClicked()
@@ -50,7 +73,7 @@ public class RatePanel : Panel
     {
         Application.OpenURL(_link);
 
-        _rateButton.interactable = true;
+        _claimButton.interactable = true;
         _claimButtonCanvasGroup.alpha = 1f;
     }
 }
