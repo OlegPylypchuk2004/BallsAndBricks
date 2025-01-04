@@ -386,6 +386,7 @@ GameObject:
   - component: {fileID: 277345399}
   - component: {fileID: 277345398}
   - component: {fileID: 277345397}
+  - component: {fileID: 277345400}
   - component: {fileID: 277345396}
   m_Layer: 5
   m_Name: ClaimButton
@@ -511,6 +512,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 277345394}
   m_CullTransparentMesh: 1
+--- !u!225 &277345400
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 277345394}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &371994757
 GameObject:
   m_ObjectHideFlags: 0
@@ -2965,6 +2978,7 @@ MonoBehaviour:
   _closeButton: {fileID: 1596249807}
   _rateButton: {fileID: 1179339644}
   _link: https://play.google.com/store/apps/details?id=com.ByteBitStudios.BreakTheNumbers
+  _claimButtonCanvasGroup: {fileID: 277345400}
 --- !u!1 &1867979552
 GameObject:
   m_ObjectHideFlags: 0
