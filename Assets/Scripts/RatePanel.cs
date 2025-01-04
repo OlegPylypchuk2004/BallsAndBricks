@@ -71,8 +71,11 @@ public class RatePanel : Panel
 
     private void OnClaimButtonClicked()
     {
+        _claimButton.interactable = false;
+
         PlayerData playerData = PlayerDataManager.LoadPlayerData();
         playerData.IsRateRewardClaimed = true;
+        playerData.CoinsCount += 50;
 
         PlayerDataManager.SavePlayerData(playerData);
 
