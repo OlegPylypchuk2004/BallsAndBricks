@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -6,10 +7,20 @@ public class ChooseSkinSceneUI : MonoBehaviour
     [SerializeField] private SceneChanger _sceneChanger;
     [SerializeField] private Button _backButton;
     [SerializeField] private ChooseBallButton[] _chooseBallButtons;
-    [SerializeField] private Gradient _ballsColorGradient;
+    
+    private Gradient _ballsColorGradient;
+    private int _chosenBallSkinIndex;
 
     private void Start()
     {
+        PlayerData playerData = PlayerDataManager.LoadPlayerData();
+        _chosenBallSkinIndex = playerData.ChosenBallSkinIndex;
+
+        if (_chosenBallSkinIndex < 0 || _chosenBallSkinIndex > _chooseBallButtons.Length - 1)
+        {
+            _chosenBallSkinIndex = 0;
+        }
+
         _ballsColorGradient = Resources.Load<BallsColorGradientData>("BallsColorGradient").Gradient;
 
         for (int i = 0; i < _chooseBallButtons.Length; i++)
@@ -18,14 +29,14 @@ public class ChooseSkinSceneUI : MonoBehaviour
 
             if (i == 0)
             {
-                _chooseBallButtons[i].Initialize(i + 1, targetColor, false);
+                _chooseBallButtons[i].Initialize(i + 1, targetColor, true, i == _chosenBallSkinIndex);
             }
             else
             {
                 float t = Mathf.Clamp01((float)i / (_chooseBallButtons.Length - 1));
                 targetColor = _ballsColorGradient.Evaluate(t);
 
-                _chooseBallButtons[i].Initialize(i + 1, targetColor, false);
+                _chooseBallButtons[i].Initialize(i + 1, targetColor, playerData.PurchausedBallSkinIndexes.Contains(i), i == _chosenBallSkinIndex);
             }
         }
     }
@@ -33,15 +44,42 @@ public class ChooseSkinSceneUI : MonoBehaviour
     private void OnEnable()
     {
         _backButton.onClick.AddListener(OnBackButtonClicked);
+
+        foreach (ChooseBallButton chooseBallButton in _chooseBallButtons)
+        {
+            chooseBallButton.Clicked += OnChooseBallButtonClicked;
+        }
     }
 
     private void OnDisable()
     {
         _backButton.onClick.RemoveListener(OnBackButtonClicked);
+
+        foreach (ChooseBallButton chooseBallButton in _chooseBallButtons)
+        {
+            chooseBallButton.Clicked -= OnChooseBallButtonClicked;
+        }
     }
 
     private void OnBackButtonClicked()
     {
         _sceneChanger.LoadByName("MenuScene");
+    }
+
+    private void OnChooseBallButtonClicked(ChooseBallButton chooseBallButton)
+    {
+        _chooseBallButtons[_chosenBallSkinIndex].Unselect();
+        _chosenBallSkinIndex = Array.IndexOf(_chooseBallButtons, chooseBallButton);
+        _chooseBallButtons[_chosenBallSkinIndex].Select();
+
+        PlayerData playerData = PlayerDataManager.LoadPlayerData();
+        playerData.ChosenBallSkinIndex = _chosenBallSkinIndex;
+
+        if (!playerData.PurchausedBallSkinIndexes.Contains(_chosenBallSkinIndex))
+        {
+            playerData.PurchausedBallSkinIndexes.Add(_chosenBallSkinIndex);
+        }
+
+        PlayerDataManager.SavePlayerData(playerData);
     }
 }
