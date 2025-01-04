@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System;
 using UnityEngine;
 using UnityEngine.UI;
@@ -73,6 +74,9 @@ public class ChooseBallButton : MonoBehaviour
         _lockImage.gameObject.SetActive(false);
 
         _outlineImage.sprite = _outlineSprites[0];
+
+        _ballImage.transform.DOPunchScale(Vector3.one * 0.5f, 0.25f)
+            .SetLink(gameObject);
     }
 
     public void Unselect()
