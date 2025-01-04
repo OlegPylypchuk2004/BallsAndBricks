@@ -34,7 +34,7 @@ public class BallLauncher : MonoBehaviour
         _balls = new List<Ball>();
 
         int chosenBallSkinIndex = PlayerDataManager.LoadPlayerData().ChosenBallSkinIndex;
-        Debug.LogError(chosenBallSkinIndex);
+
         if (chosenBallSkinIndex == 0)
         {
             _ballsColor = Color.white;
