@@ -38,7 +38,7 @@ public class RatePanel : Panel
             _rewardAlreadyClaimedText.gameObject.SetActive(false);
 
             _claimButton.interactable = false;
-            _claimButtonCanvasGroup.alpha = .5f;
+            _claimButtonCanvasGroup.alpha = .25f;
         }
 
         return base.Appear();
@@ -82,6 +82,20 @@ public class RatePanel : Panel
         _claimButton.gameObject.SetActive(false);
         _rewardAlreadyClaimedText.gameObject.SetActive(true);
         _rewardAlreadyClaimedText.text = "Reward claimed";
+
+        Sequence textAppearSequence = DOTween.Sequence();
+
+        textAppearSequence.Join
+            (_rewardAlreadyClaimedText.transform.DOScale(1f, 0.125f)
+            .From(0.95f)
+            .SetEase(Ease.OutQuad));
+
+        textAppearSequence.Join
+            (_rewardAlreadyClaimedText.DOFade(1f, 0.125f)
+            .From(0f)
+            .SetEase(Ease.OutQuad));
+
+        textAppearSequence.SetLink(gameObject);
     }
 
     private void OnCloseButtonClicked()
