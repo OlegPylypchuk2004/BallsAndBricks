@@ -10,6 +10,8 @@ public class MenuSceneUI : MonoBehaviour
     [SerializeField] private Image _soundButtonImage;
     [SerializeField] private Sprite _enabledSoundButtonSprite;
     [SerializeField] private Sprite _disabledSoundButtonSprite;
+    [SerializeField] private Button _rateButton;
+    [SerializeField] private RatePanel _ratePanel;
 
     private void Start()
     {
@@ -28,11 +30,13 @@ public class MenuSceneUI : MonoBehaviour
     private void OnEnable()
     {
         _soundButton.onClick.AddListener(OnSoundButtonClicked);
+        _rateButton.onClick.AddListener(OnRateButtonClicked);
     }
 
     private void OnDisable()
     {
         _soundButton.onClick.RemoveListener(OnSoundButtonClicked);
+        _rateButton.onClick.RemoveListener(OnRateButtonClicked);
     }
 
     private void OnSoundButtonClicked()
@@ -57,5 +61,10 @@ public class MenuSceneUI : MonoBehaviour
         }
 
         SoundManager.Instance.PlayAudioClip(_buttonClickSound);
+    }
+
+    private void OnRateButtonClicked()
+    {
+        _ratePanel.Appear();
     }
 }
