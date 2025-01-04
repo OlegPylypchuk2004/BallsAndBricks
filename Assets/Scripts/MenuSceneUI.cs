@@ -4,14 +4,14 @@ using UnityEngine.UI;
 
 public class MenuSceneUI : MonoBehaviour
 {
-    [SerializeField] private SceneChanger _sceneChanger;
     [SerializeField] private TextMeshProUGUI _bestScoreText;
     [SerializeField] private AudioClip _buttonClickSound;
     [SerializeField] private Button _soundButton;
     [SerializeField] private Image _soundButtonImage;
     [SerializeField] private Sprite _enabledSoundButtonSprite;
     [SerializeField] private Sprite _disabledSoundButtonSprite;
-    [SerializeField] private Button _chooseSkinButton;
+    [SerializeField] private Button _rateButton;
+    [SerializeField] private RatePanel _ratePanel;
 
     private void Start()
     {
@@ -30,13 +30,13 @@ public class MenuSceneUI : MonoBehaviour
     private void OnEnable()
     {
         _soundButton.onClick.AddListener(OnSoundButtonClicked);
-        _chooseSkinButton.onClick.AddListener(OnChooseSkinButtonClicked);
+        _rateButton.onClick.AddListener(OnRateButtonClicked);
     }
 
     private void OnDisable()
     {
         _soundButton.onClick.RemoveListener(OnSoundButtonClicked);
-        _chooseSkinButton.onClick.RemoveListener(OnChooseSkinButtonClicked);
+        _rateButton.onClick.RemoveListener(OnRateButtonClicked);
     }
 
     private void OnSoundButtonClicked()
@@ -63,8 +63,8 @@ public class MenuSceneUI : MonoBehaviour
         SoundManager.Instance.PlayAudioClip(_buttonClickSound);
     }
 
-    private void OnChooseSkinButtonClicked()
+    private void OnRateButtonClicked()
     {
-        _sceneChanger.LoadByName("ChooseSkinScene");
+        _ratePanel.Appear();
     }
 }

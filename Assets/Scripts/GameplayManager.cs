@@ -27,6 +27,7 @@ public class GameplayManager : MonoBehaviour
     private int _pickedBallsCount;
     private int _pickedCoinsCount;
     private bool _isPaused;
+    private bool _isLockSaveGameData;
     private Coroutine _showSpeedUpButtonCoroutine;
     private Coroutine _instantReturnBallsCoroutine;
 
@@ -44,6 +45,13 @@ public class GameplayManager : MonoBehaviour
         _ballLauncher.LaunchFinished += OnLaunchFinished;
 
         _pauseButton.onClick.AddListener(OnPauseButtonClicked);
+
+        GameData gameData = GameDataManager.LoadGameData();
+
+        if (gameData.BrickDestroyCount > 0 && gameData.LaunchDirection != Vector2.zero)
+        {
+            _ballLauncher.AutoLaunch(gameData.LaunchDirection);
+        }
     }
 
     private void OnDestroy()
@@ -163,6 +171,7 @@ public class GameplayManager : MonoBehaviour
         gameData.BallsCount = _ballLauncher.BallsCount;
         gameData.PickedCoinsCount = _pickedCoinsCount;
         gameData.HorizontalBallsPosition = _ballLauncher.HorizontalBallsPosition;
+        gameData.LaunchDirection = Vector2.zero;
 
         foreach (Row row in _rows)
         {
@@ -353,7 +362,7 @@ public class GameplayManager : MonoBehaviour
         return moveRowsSequence;
     }
 
-    private void OnLaunchStarted()
+    private void OnLaunchStarted(Vector2 direction)
     {
         _ballLauncher.LaunchStarted -= OnLaunchStarted;
 
@@ -361,13 +370,19 @@ public class GameplayManager : MonoBehaviour
         _ballLauncher.BallsFallen += OnBallsFallen;
 
         _showSpeedUpButtonCoroutine = StartCoroutine(ShowSpeedUpButton());
+
+        if (direction != Vector2.zero)
+        {
+            GameData gameData = GameDataManager.LoadGameData();
+            gameData.LaunchDirection = direction;
+
+            GameDataManager.SaveGameData(gameData);
+        }
     }
 
     private void OnLaunchFinished()
     {
         _ballLauncher.LaunchFinished -= OnLaunchFinished;
-
-        _instantReturnBallsCoroutine = StartCoroutine(InstantReturnBalls());
     }
 
     private void OnBallsFallen()
@@ -401,6 +416,8 @@ public class GameplayManager : MonoBehaviour
             {
                 if (IsLosed())
                 {
+                    _isLockSaveGameData = true;
+
                     PlayerData playerData = PlayerDataManager.LoadPlayerData();
 
                     int score = ScoreManager.Instance.BrickDestroyCount;
@@ -434,7 +451,11 @@ public class GameplayManager : MonoBehaviour
                 else
                 {
                     SpawnRow();
-                    SaveGame();
+
+                    if (!_isLockSaveGameData)
+                    {
+                        SaveGame();
+                    }
 
                     _isCanLaunchBalls = true;
                     _ballLauncher.LaunchStarted += OnLaunchStarted;
@@ -504,13 +525,6 @@ public class GameplayManager : MonoBehaviour
 
         _speedUpButton.gameObject.SetActive(true);
         _speedUpButton.onClick.AddListener(OnSpeedUpButtonClicked);
-    }
-
-    private IEnumerator InstantReturnBalls()
-    {
-        yield return new WaitForSeconds(30f);
-
-        _ballLauncher.InstantReturnBalls();
     }
 
     private void OnSpeedUpButtonClicked()

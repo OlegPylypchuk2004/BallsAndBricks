@@ -16,7 +16,7 @@ public class Target : MonoBehaviour
         _reflectionLineRenderer.positionCount = 2;
     }
 
-    private void Update()
+    private void LateUpdate()
     {
         Vector2 origin = transform.position;
         Vector2 direction = transform.up;

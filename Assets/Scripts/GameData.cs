@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 [Serializable]
 public class GameData
@@ -9,6 +10,7 @@ public class GameData
     public int BallsCount;
     public int PickedCoinsCount;
     public float HorizontalBallsPosition;
+    public Vector2 LaunchDirection;
     public List<RowData> RowDatas;
 
     public GameData()

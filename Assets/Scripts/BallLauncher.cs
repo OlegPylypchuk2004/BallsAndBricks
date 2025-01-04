@@ -20,7 +20,10 @@ public class BallLauncher : MonoBehaviour
     private Vector2 _tapPosition;
     private Vector2 _launchDirection;
 
-    public event Action LaunchStarted;
+    private float _lastBrickHitTime;
+    private bool _isBallsLaunched;
+
+    public event Action<Vector2> LaunchStarted;
     public event Action LaunchFinished;
     public event Action BallsFallen;
 
@@ -33,6 +36,26 @@ public class BallLauncher : MonoBehaviour
     {
         Ball ballPrefab = Resources.Load<Ball>("Prefabs/Ball");
         _ballsPool = new ObjectPool<Ball>(ballPrefab, 10);
+    }
+
+    private void Update()
+    {
+        if (_isBallsLaunched)
+        {
+            if (_lastBrickHitTime >= 10f)
+            {
+                InstantReturnBalls();
+                _lastBrickHitTime = 0f;
+            }
+            else
+            {
+                _lastBrickHitTime += Time.deltaTime;
+            }
+        }
+        else
+        {
+            _lastBrickHitTime = 0f;
+        }
     }
 
     public void Initilize(float horizontalBallsPosition = 0f)
@@ -142,7 +165,9 @@ public class BallLauncher : MonoBehaviour
 
     private IEnumerator Launch(Vector2 direction)
     {
-        LaunchStarted?.Invoke();
+        LaunchStarted?.Invoke(direction);
+
+        _isBallsLaunched = true;
 
         int notLaunchedBallsCount = _balls.Count;
 
@@ -165,6 +190,7 @@ public class BallLauncher : MonoBehaviour
             yield return new WaitForSeconds(0.075f);
 
             ball.Fallen += OnBallFallen;
+            ball.BrickHitted += OnBrickHitted;
         }
 
         LaunchFinished?.Invoke();
@@ -173,6 +199,7 @@ public class BallLauncher : MonoBehaviour
     private void OnBallFallen(Ball ball, Vector2 position)
     {
         ball.Fallen -= OnBallFallen;
+        ball.BrickHitted -= OnBrickHitted;
 
         _fallenBallsCount++;
         Sequence resetBallsSequence = DOTween.Sequence();
@@ -192,6 +219,7 @@ public class BallLauncher : MonoBehaviour
         if (_fallenBallsCount >= _balls.Count)
         {
             _fallenBallsCount = 0;
+            _isBallsLaunched = false;
 
             resetBallsSequence.OnKill(() =>
             {
@@ -221,13 +249,25 @@ public class BallLauncher : MonoBehaviour
         }
     }
 
-    public void InstantReturnBalls()
+    private void OnBrickHitted()
+    {
+        _lastBrickHitTime = 0f;
+    }
+
+    private void InstantReturnBalls()
     {
         Vector2 targetBallsPosition = new Vector2(0f, -4.755f);
 
         foreach (Ball ball in _balls)
         {
+            ball.InstantFall();
             ball.transform.position = targetBallsPosition;
+            OnBallFallen(ball, targetBallsPosition);
         }
+    }
+
+    public void AutoLaunch(Vector2 direction)
+    {
+        StartCoroutine(Launch(direction));
     }
 }
