@@ -5,8 +5,10 @@ using UnityEngine.UI;
 public class ChooseBallButton : MonoBehaviour
 {
     [SerializeField] private Image _ballImage;
+    [SerializeField] private Image _lockImage;
     [SerializeField] private Image _outlineImage;
     [SerializeField] private Button _button;
+    [SerializeField] private Sprite[] _outlineSprites;
 
     private int _number;
     private Color _color;
@@ -31,7 +33,21 @@ public class ChooseBallButton : MonoBehaviour
         _isPurchaused = isPurchaused;
 
         _ballImage.color = _color;
-        _button.interactable = isPurchaused;
+
+        if (isPurchaused)
+        {
+            _ballImage.gameObject.SetActive(true);
+            _lockImage.gameObject.SetActive(false);
+
+            _outlineImage.sprite = _outlineSprites[0];
+        }
+        else
+        {
+            _ballImage.gameObject.SetActive(false);
+            _lockImage.gameObject.SetActive(true);
+
+            _outlineImage.sprite = _outlineSprites[1];
+        }
 
         Color targetOutlineColor = Color.white;
 
@@ -41,7 +57,7 @@ public class ChooseBallButton : MonoBehaviour
         }
         else
         {
-            targetOutlineColor.a = .5f;
+            targetOutlineColor.a = .25f;
         }
 
         _outlineImage.color = targetOutlineColor;
@@ -52,6 +68,11 @@ public class ChooseBallButton : MonoBehaviour
         Color targetOutlineColor = Color.white;
 
         _outlineImage.color = targetOutlineColor;
+
+        _ballImage.gameObject.SetActive(true);
+        _lockImage.gameObject.SetActive(false);
+
+        _outlineImage.sprite = _outlineSprites[0];
     }
 
     public void Unselect()

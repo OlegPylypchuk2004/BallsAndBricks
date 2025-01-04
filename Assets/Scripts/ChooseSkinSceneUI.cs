@@ -68,15 +68,17 @@ public class ChooseSkinSceneUI : MonoBehaviour
 
     private void OnChooseBallButtonClicked(ChooseBallButton chooseBallButton)
     {
+        PlayerData playerData = PlayerDataManager.LoadPlayerData();
+
         _chooseBallButtons[_chosenBallSkinIndex].Unselect();
         _chosenBallSkinIndex = Array.IndexOf(_chooseBallButtons, chooseBallButton);
         _chooseBallButtons[_chosenBallSkinIndex].Select();
 
-        PlayerData playerData = PlayerDataManager.LoadPlayerData();
         playerData.ChosenBallSkinIndex = _chosenBallSkinIndex;
 
-        if (!playerData.PurchausedBallSkinIndexes.Contains(_chosenBallSkinIndex))
+        if (!playerData.PurchausedBallSkinIndexes.Contains(_chosenBallSkinIndex) && playerData.CoinsCount >= 25)
         {
+            playerData.CoinsCount -= 25;
             playerData.PurchausedBallSkinIndexes.Add(_chosenBallSkinIndex);
         }
 
