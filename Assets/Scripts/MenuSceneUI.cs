@@ -4,6 +4,7 @@ using UnityEngine.UI;
 
 public class MenuSceneUI : MonoBehaviour
 {
+    [SerializeField] private SceneChanger _sceneChanger;
     [SerializeField] private TextMeshProUGUI _bestScoreText;
     [SerializeField] private AudioClip _buttonClickSound;
     [SerializeField] private Button _soundButton;
@@ -12,6 +13,7 @@ public class MenuSceneUI : MonoBehaviour
     [SerializeField] private Sprite _disabledSoundButtonSprite;
     [SerializeField] private Button _rateButton;
     [SerializeField] private RatePanel _ratePanel;
+    [SerializeField] private Button _skinsButton;
 
     private void Start()
     {
@@ -31,12 +33,14 @@ public class MenuSceneUI : MonoBehaviour
     {
         _soundButton.onClick.AddListener(OnSoundButtonClicked);
         _rateButton.onClick.AddListener(OnRateButtonClicked);
+        _skinsButton.onClick.AddListener(OnSkinsButtonClicked);
     }
 
     private void OnDisable()
     {
         _soundButton.onClick.RemoveListener(OnSoundButtonClicked);
         _rateButton.onClick.RemoveListener(OnRateButtonClicked);
+        _skinsButton.onClick.RemoveListener(OnSkinsButtonClicked);
     }
 
     private void OnSoundButtonClicked()
@@ -66,5 +70,10 @@ public class MenuSceneUI : MonoBehaviour
     private void OnRateButtonClicked()
     {
         _ratePanel.Appear();
+    }
+
+    private void OnSkinsButtonClicked()
+    {
+        _sceneChanger.LoadByName("ChooseSkinScene");
     }
 }
