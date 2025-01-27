@@ -7,6 +7,7 @@ public class ChooseBallButton : MonoBehaviour
 {
     [SerializeField] private Image _ballImage;
     [SerializeField] private Image _lockImage;
+    [SerializeField] private GameObject _priceView;
     [SerializeField] private Image _outlineImage;
     [SerializeField] private Button _button;
     [SerializeField] private Sprite[] _outlineSprites;
@@ -39,6 +40,7 @@ public class ChooseBallButton : MonoBehaviour
         {
             _ballImage.gameObject.SetActive(true);
             _lockImage.gameObject.SetActive(false);
+            _priceView.gameObject.SetActive(false);
 
             _outlineImage.sprite = _outlineSprites[0];
         }
@@ -46,6 +48,7 @@ public class ChooseBallButton : MonoBehaviour
         {
             _ballImage.gameObject.SetActive(false);
             _lockImage.gameObject.SetActive(true);
+            _priceView.gameObject.SetActive(true);
 
             _outlineImage.sprite = _outlineSprites[1];
         }
@@ -72,6 +75,7 @@ public class ChooseBallButton : MonoBehaviour
 
         _ballImage.gameObject.SetActive(true);
         _lockImage.gameObject.SetActive(false);
+        _priceView.gameObject.SetActive(false);
 
         _outlineImage.sprite = _outlineSprites[0];
 
