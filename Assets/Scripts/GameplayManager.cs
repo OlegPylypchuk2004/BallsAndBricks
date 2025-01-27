@@ -34,6 +34,8 @@ public class GameplayManager : MonoBehaviour
     private Coroutine _showSpeedUpButtonCoroutine;
     private Coroutine _instantReturnBallsCoroutine;
 
+    private Tween _moveSpeedUpTextTween;
+
     public event Action<int> PickedCoinsCountChanged;
 
     private void Start()
@@ -398,6 +400,12 @@ public class GameplayManager : MonoBehaviour
         _speedUpButton.gameObject.SetActive(false);
         _speedUpText.gameObject.SetActive(false);
 
+        if (_moveSpeedUpTextTween != null)
+        {
+            _moveSpeedUpTextTween.Kill();
+            _moveSpeedUpTextTween = null;
+        }
+
         if (_showSpeedUpButtonCoroutine != null)
         {
             StopCoroutine(_showSpeedUpButtonCoroutine);
@@ -530,6 +538,11 @@ public class GameplayManager : MonoBehaviour
         _speedUpButton.gameObject.SetActive(true);
         _speedUpText.gameObject.SetActive(true);
 
+        _moveSpeedUpTextTween = _speedUpTextRectTransform.DOAnchorPosX(-325f, 0.25f)
+            .SetEase(Ease.OutQuad)
+            .SetLoops(-1, LoopType.Yoyo)
+            .SetLink(gameObject);
+
         _speedUpText.DOFade(1f, 0.25f)
             .From(0f)
             .SetEase(Ease.OutQuad);
@@ -545,6 +558,12 @@ public class GameplayManager : MonoBehaviour
         _speedUpText.gameObject.SetActive(false);
 
         Time.timeScale = 2f;
+
+        if (_moveSpeedUpTextTween != null)
+        {
+            _moveSpeedUpTextTween.Kill();
+            _moveSpeedUpTextTween = null;
+        }
     }
 
     public int PickedCoinsCount => _pickedCoinsCount;
