@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -15,6 +16,8 @@ public class GameplayManager : MonoBehaviour
     [SerializeField] private GameOverPanel _gameOverPanel;
     [SerializeField] private SceneChanger _sceneChanger;
     [SerializeField] private Button _speedUpButton;
+    [SerializeField] private RectTransform _speedUpTextRectTransform;
+    [SerializeField] private TextMeshProUGUI _speedUpText;
 
     private ObjectPool<Row> _rowsPool;
     private ObjectPool<Brick> _bricksPool;
@@ -393,6 +396,7 @@ public class GameplayManager : MonoBehaviour
         }
 
         _speedUpButton.gameObject.SetActive(false);
+        _speedUpText.gameObject.SetActive(false);
 
         if (_showSpeedUpButtonCoroutine != null)
         {
@@ -524,13 +528,21 @@ public class GameplayManager : MonoBehaviour
         yield return new WaitForSeconds(5f);
 
         _speedUpButton.gameObject.SetActive(true);
+        _speedUpText.gameObject.SetActive(true);
+
+        _speedUpText.DOFade(1f, 0.25f)
+            .From(0f)
+            .SetEase(Ease.OutQuad);
+
         _speedUpButton.onClick.AddListener(OnSpeedUpButtonClicked);
     }
 
     private void OnSpeedUpButtonClicked()
     {
         _speedUpButton.onClick.RemoveListener(OnSpeedUpButtonClicked);
+
         _speedUpButton.gameObject.SetActive(false);
+        _speedUpText.gameObject.SetActive(false);
 
         Time.timeScale = 2f;
     }
