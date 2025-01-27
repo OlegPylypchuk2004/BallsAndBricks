@@ -8318,6 +8318,7 @@ MonoBehaviour:
   _speedUpButton: {fileID: 1851809493}
   _speedUpTextRectTransform: {fileID: 327997878}
   _speedUpText: {fileID: 327997879}
+  _pickableEffectPrefab: {fileID: 8525922797783540497, guid: e2625295524273a4587204c5638b8b92, type: 3}
 --- !u!1 &2102508478
 GameObject:
   m_ObjectHideFlags: 0

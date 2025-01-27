@@ -18,6 +18,7 @@ public class GameplayManager : MonoBehaviour
     [SerializeField] private Button _speedUpButton;
     [SerializeField] private RectTransform _speedUpTextRectTransform;
     [SerializeField] private TextMeshProUGUI _speedUpText;
+    [SerializeField] private PickableEffect _pickableEffectPrefab;
 
     private ObjectPool<Row> _rowsPool;
     private ObjectPool<Brick> _bricksPool;
@@ -338,6 +339,9 @@ public class GameplayManager : MonoBehaviour
         _pickupableBallPool.ReturnObject(pickupableBall);
 
         _pickedBallsCount++;
+
+        PickableEffect pickableEffect = Instantiate(_pickableEffectPrefab, pickupableBall.transform.position, Quaternion.identity);
+        pickableEffect.Initialize(PickableEffect.EffectType.Ball);
     }
 
     private void OnPickupableCoinPicked(PickupableItem pickupableCoin)
@@ -346,6 +350,9 @@ public class GameplayManager : MonoBehaviour
         _pickupableCoinPool.ReturnObject(pickupableCoin);
 
         _pickedCoinsCount++;
+
+        PickableEffect pickableEffect = Instantiate(_pickableEffectPrefab, pickupableCoin.transform.position, Quaternion.identity);
+        pickableEffect.Initialize(PickableEffect.EffectType.Coin);
 
         PickedCoinsCountChanged?.Invoke(_pickedCoinsCount);
     }
