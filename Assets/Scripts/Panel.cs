@@ -1,4 +1,5 @@
 using DG.Tweening;
+using System;
 using UnityEngine;
 
 public class Panel : MonoBehaviour
@@ -9,6 +10,9 @@ public class Panel : MonoBehaviour
     [SerializeField] private AudioClip _appearSound;
     [SerializeField] private AudioClip _disappearSound;
     [SerializeField] private bool _isPlaySound;
+
+    public event Action<Panel> Appeared;
+    public event Action<Panel> Disappeared;
 
     public virtual Sequence Appear()
     {
@@ -45,6 +49,8 @@ public class Panel : MonoBehaviour
             _canvasGroup.interactable = true;
 
             SubscribeOnEvents();
+
+            Appeared?.Invoke(this);
         });
 
         return appearSequence;
@@ -82,6 +88,8 @@ public class Panel : MonoBehaviour
         disappearSequence.OnKill(() =>
         {
             gameObject.SetActive(false);
+
+            Disappeared?.Invoke(this);
         });
 
         return disappearSequence;

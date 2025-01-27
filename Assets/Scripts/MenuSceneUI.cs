@@ -14,18 +14,28 @@ public class MenuSceneUI : MonoBehaviour
     [SerializeField] private Button _rateButton;
     [SerializeField] private RatePanel _ratePanel;
     [SerializeField] private Button _skinsButton;
+    [SerializeField] private Image _rateButtonImage;
+    [SerializeField] private Sprite _rateButtonDefaultSprite;
+    [SerializeField] private Sprite _rateButtonNotificationSprite;
 
     private void Start()
     {
-        _bestScoreText.text = $"{PlayerDataManager.LoadPlayerData().BestScore}";
+        PlayerData playerData = PlayerDataManager.LoadPlayerData();
 
-        if (!PlayerDataManager.LoadPlayerData().IsSoundDisabled)
+        _bestScoreText.text = $"{playerData.BestScore}";
+
+        if (!playerData.IsSoundDisabled)
         {
             _soundButtonImage.sprite = _enabledSoundButtonSprite;
         }
         else
         {
             _soundButtonImage.sprite = _disabledSoundButtonSprite;
+        }
+
+        if (!playerData.IsRateRewardClaimed)
+        {
+            _rateButtonImage.sprite = _rateButtonNotificationSprite;
         }
     }
 
@@ -34,6 +44,8 @@ public class MenuSceneUI : MonoBehaviour
         _soundButton.onClick.AddListener(OnSoundButtonClicked);
         _rateButton.onClick.AddListener(OnRateButtonClicked);
         _skinsButton.onClick.AddListener(OnSkinsButtonClicked);
+
+        _ratePanel.Disappeared += OnRatePanelDisappeared;
     }
 
     private void OnDisable()
@@ -41,6 +53,8 @@ public class MenuSceneUI : MonoBehaviour
         _soundButton.onClick.RemoveListener(OnSoundButtonClicked);
         _rateButton.onClick.RemoveListener(OnRateButtonClicked);
         _skinsButton.onClick.RemoveListener(OnSkinsButtonClicked);
+
+        _ratePanel.Disappeared -= OnRatePanelDisappeared;
     }
 
     private void OnSoundButtonClicked()
@@ -75,5 +89,13 @@ public class MenuSceneUI : MonoBehaviour
     private void OnSkinsButtonClicked()
     {
         _sceneChanger.LoadByName("ChooseSkinScene");
+    }
+
+    private void OnRatePanelDisappeared(Panel panel)
+    {
+        if (PlayerDataManager.LoadPlayerData().IsRateRewardClaimed)
+        {
+            _rateButtonImage.sprite = _rateButtonDefaultSprite;
+        }
     }
 }

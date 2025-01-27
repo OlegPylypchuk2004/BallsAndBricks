@@ -4306,6 +4306,9 @@ MonoBehaviour:
   _rateButton: {fileID: 1867979554}
   _ratePanel: {fileID: 1678732246}
   _skinsButton: {fileID: 401159578}
+  _rateButtonImage: {fileID: 158756563}
+  _rateButtonDefaultSprite: {fileID: 21300000, guid: f86d5c96d8934384aae7e9bea3f7e8d3, type: 3}
+  _rateButtonNotificationSprite: {fileID: 21300000, guid: d765be9bf08755c4ca496339e66335aa, type: 3}
 --- !u!1 &2110295324
 GameObject:
   m_ObjectHideFlags: 0
