@@ -1,5 +1,6 @@
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
-using System.Collections;
+using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
@@ -8,91 +9,126 @@ using UnityEngine.UI;
 public class SceneChanger : MonoBehaviour
 {
     [SerializeField] private EventSystem _eventSystem;
-    [SerializeField] private Image _fadeImage;
+    [SerializeField] private Image _backgroundImage;
+    [SerializeField] private bool _isLockHideAnimation;
 
-    private AsyncOperation _loadSceneOperation;
+    private Sequence _currentSequence;
 
-    private IEnumerator Start()
+    public static SceneChanger Instance { get; private set; }
+    public bool IsLoading { get; private set; }
+    public int CurrentSceneIndex => SceneManager.GetActiveScene().buildIndex;
+
+    public event Action LoadStarted;
+    public event Action LoadCompleted;
+    public event Action Showed;
+    public event Action Hided;
+
+    private void Awake()
     {
-        PlayDisappearAnimation();
-
-        yield return new WaitForSeconds(0.25f);
-
-        if (_eventSystem != null)
+        if (Instance == null)
         {
-            _eventSystem.gameObject.SetActive(true);
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
         }
     }
 
-    public void LoadByName(string sceneName)
+    private void Start()
     {
-        _loadSceneOperation = SceneManager.LoadSceneAsync(sceneName);
-        _loadSceneOperation.allowSceneActivation = false;
-
-        StartCoroutine(DelayBeforeLoad());
-    }
-
-    public void LoadByIndex(int sceneIndex)
-    {
-        _loadSceneOperation = SceneManager.LoadSceneAsync(sceneIndex);
-        _loadSceneOperation.allowSceneActivation = false;
-
-        StartCoroutine(DelayBeforeLoad());
-    }
-
-    public void LoadCurrent()
-    {
-        _loadSceneOperation = SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex);
-        _loadSceneOperation.allowSceneActivation = false;
-
-        StartCoroutine(DelayBeforeLoad());
-    }
-
-    public void LoadPrevious()
-    {
-        _loadSceneOperation = SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex - 1);
-        _loadSceneOperation.allowSceneActivation = false;
-
-        StartCoroutine(DelayBeforeLoad());
-    }
-
-    public void LoadNext()
-    {
-        _loadSceneOperation = SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex + 1);
-        _loadSceneOperation.allowSceneActivation = false;
-
-        StartCoroutine(DelayBeforeLoad());
-    }
-
-    private IEnumerator DelayBeforeLoad()
-    {
-        if (_eventSystem != null)
+        if (!_isLockHideAnimation)
         {
-            _eventSystem.gameObject.SetActive(false);
+            Hide();
+        }
+    }
+
+    public void Load(int index)
+    {
+        if (IsLoading)
+        {
+            return;
         }
 
-        PlayAppearAnimation();
-
-        yield return new WaitForSeconds(0.5f);
-
-        _loadSceneOperation.allowSceneActivation = true;
+        LoadAsync(index).Forget();
     }
 
-    private void PlayAppearAnimation()
+    private async UniTaskVoid LoadAsync(int index)
     {
-        _fadeImage.DOFade(1f, 0.25f)
+        await Show().AsyncWaitForCompletion();
+
+        LoadStarted?.Invoke();
+
+        await UniTask.Delay(TimeSpan.FromSeconds(1f));
+        await SceneManager.LoadSceneAsync(index).ToUniTask();
+
+        LoadCompleted?.Invoke();
+    }
+
+    private Sequence Show()
+    {
+        IsLoading = true;
+
+        _eventSystem?.gameObject.SetActive(false);
+
+        _currentSequence?.Kill();
+
+        _currentSequence = DOTween.Sequence();
+        _currentSequence.SetLink(gameObject);
+
+        _currentSequence.AppendCallback(() =>
+        {
+            _backgroundImage.gameObject.SetActive(true);
+        });
+
+        _currentSequence.Append(_backgroundImage.DOFade(1f, 0.25f)
             .From(0f)
-            .SetEase(Ease.OutQuad)
-            .SetLink(gameObject)
-            .SetUpdate(true);
+            .SetEase(Ease.OutQuad));
+
+        _currentSequence.AppendCallback(() =>
+        {
+            Showed?.Invoke();
+        });
+
+        return _currentSequence;
     }
 
-    private void PlayDisappearAnimation()
+    private Sequence Hide()
     {
-        _fadeImage.DOFade(0f, 0.25f)
-            .From(1f)
-            .SetEase(Ease.InQuad)
-            .SetLink(gameObject)
-            .SetUpdate(true);
+        IsLoading = true;
+
+        _eventSystem?.gameObject.SetActive(false);
+
+        _currentSequence?.Kill();
+
+        _currentSequence = DOTween.Sequence();
+        _currentSequence.SetLink(gameObject);
+
+        _currentSequence.AppendCallback(() =>
+        {
+            _backgroundImage.gameObject.SetActive(true);
+        });
+
+        _currentSequence.Append(_backgroundImage.DOFade(0f, 0.25f)
+            .SetEase(Ease.InQuad));
+
+        _currentSequence.AppendCallback(() =>
+        {
+            _backgroundImage.gameObject.SetActive(false);
+        });
+
+        _currentSequence.AppendCallback(() =>
+        {
+            Hided?.Invoke();
+
+            IsLoading = false;
+        });
+
+        _currentSequence.OnKill(() =>
+        {
+            _eventSystem?.gameObject.SetActive(true);
+        });
+
+        return _currentSequence;
     }
 }

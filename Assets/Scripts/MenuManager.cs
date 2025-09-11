@@ -3,7 +3,6 @@ using UnityEngine.UI;
 
 public class MenuManager : MonoBehaviour
 {
-    [SerializeField] private SceneChanger _sceneChanger;
     [SerializeField] private Button _playButton;
 
     private void OnEnable()
@@ -18,6 +17,6 @@ public class MenuManager : MonoBehaviour
 
     private void OnPlayButtonClicked()
     {
-        _sceneChanger.LoadByName("GameplayScene");
+        SceneChanger.Instance.Load(2);
     }
 }

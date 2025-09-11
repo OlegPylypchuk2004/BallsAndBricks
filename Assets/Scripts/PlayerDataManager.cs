@@ -17,7 +17,7 @@ public class PlayerDataManager : MonoBehaviour
     {
         if (!File.Exists(SavePath))
         {
-            Debug.Log("Plauer save file not found");
+            Debug.Log("Player save file not found");
 
             return new PlayerData();
         }

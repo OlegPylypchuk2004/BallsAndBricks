@@ -4,7 +4,6 @@ using UnityEngine.UI;
 
 public class MenuSceneUI : MonoBehaviour
 {
-    [SerializeField] private SceneChanger _sceneChanger;
     [SerializeField] private TextMeshProUGUI _bestScoreText;
     [SerializeField] private AudioClip _buttonClickSound;
     [SerializeField] private Button _soundButton;
@@ -88,7 +87,7 @@ public class MenuSceneUI : MonoBehaviour
 
     private void OnSkinsButtonClicked()
     {
-        _sceneChanger.LoadByName("ChooseSkinScene");
+        SceneChanger.Instance.Load(3);
     }
 
     private void OnRatePanelDisappeared(Panel panel)

@@ -4,7 +4,6 @@ using UnityEngine.UI;
 
 public class ChooseSkinSceneUI : MonoBehaviour
 {
-    [SerializeField] private SceneChanger _sceneChanger;
     [SerializeField] private Button _backButton;
     [SerializeField] private ChooseBallButton[] _chooseBallButtons;
 
@@ -67,7 +66,7 @@ public class ChooseSkinSceneUI : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
             PlayerDataManager.DeleteSave();
-            _sceneChanger.LoadCurrent();
+            SceneChanger.Instance.Load(SceneChanger.Instance.CurrentSceneIndex);
         }
         else if (Input.GetKeyDown(KeyCode.Return))
         {
@@ -78,7 +77,7 @@ public class ChooseSkinSceneUI : MonoBehaviour
 
     private void OnBackButtonClicked()
     {
-        _sceneChanger.LoadByName("MenuScene");
+        SceneChanger.Instance.Load(1);
     }
 
     private void OnChooseBallButtonClicked(ChooseBallButton chooseBallButton)

@@ -14,7 +14,6 @@ public class GameplayManager : MonoBehaviour
     [SerializeField] private Button _pauseButton;
     [SerializeField] private PausePanel _pausePanel;
     [SerializeField] private GameOverPanel _gameOverPanel;
-    [SerializeField] private SceneChanger _sceneChanger;
     [SerializeField] private Button _speedUpButton;
     [SerializeField] private RectTransform _speedUpTextRectTransform;
     [SerializeField] private TextMeshProUGUI _speedUpText;
@@ -84,7 +83,7 @@ public class GameplayManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
             GameDataManager.DeleteSave();
-            _sceneChanger.LoadCurrent();
+            SceneChanger.Instance.Load(SceneChanger.Instance.CurrentSceneIndex);
         }
 #endif
     }
@@ -286,13 +285,13 @@ public class GameplayManager : MonoBehaviour
         }
 
         GameDataManager.DeleteSave();
-        _sceneChanger.LoadCurrent();
+        SceneChanger.Instance.Load(SceneChanger.Instance.CurrentSceneIndex);
     }
 
     public void GoToMenu()
     {
         Time.timeScale = 1f;
-        _sceneChanger.LoadByName("MenuScene");
+        SceneChanger.Instance.Load(1);
     }
 
     private void OnBrickBrokeDown(Brick brick)
