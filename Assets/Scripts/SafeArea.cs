@@ -9,7 +9,7 @@ public class SafeArea : MonoBehaviour
         _rectTransform ??= GetComponent<RectTransform>();
     }
 
-    private void Start()
+    private void Update()
     {
         Rect safeArea = Screen.safeArea;
 
