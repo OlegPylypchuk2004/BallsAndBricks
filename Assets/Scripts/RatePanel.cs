@@ -46,7 +46,7 @@ public class RatePanel : Panel
 
     public override Sequence Disappear()
     {
-        DOTween.Kill(_starsSequence);
+        _starsSequence?.Kill();
 
         return base.Disappear();
     }
@@ -113,6 +113,13 @@ public class RatePanel : Panel
 
     private void PlayStarsAnimation()
     {
+        _starsSequence?.Kill();
+
+        foreach (RectTransform starRectTransform in _starRectTransforms)
+        {
+            starRectTransform.localScale = Vector3.one;
+        }
+
         _starsSequence = DOTween.Sequence();
 
         _starsSequence.AppendInterval(3f);
