@@ -6,7 +6,8 @@ public class Bootstrap : MonoBehaviour
 
     private void Start()
     {
-        Application.targetFrameRate = (int)Screen.currentResolution.refreshRateRatio.numerator;
+        QualitySettings.vSyncCount = 0;
+        Application.targetFrameRate = 120;
         Time.fixedDeltaTime = 1f / 60f;
 
         _sceneChanger.LoadByName("MenuScene");
