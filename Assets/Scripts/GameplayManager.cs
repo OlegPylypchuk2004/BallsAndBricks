@@ -36,6 +36,7 @@ public class GameplayManager : MonoBehaviour
     private Coroutine _instantReturnBallsCoroutine;
 
     private Tween _moveSpeedUpTextTween;
+    private Vector3 _speedUpTextInitialPosition;
 
     public event Action<int> PickedCoinsCountChanged;
 
@@ -58,6 +59,8 @@ public class GameplayManager : MonoBehaviour
         {
             _ballLauncher.AutoLaunch(gameData.LaunchDirection);
         }
+
+        _speedUpTextInitialPosition = _speedUpTextRectTransform.anchoredPosition;
     }
 
     private void OnDestroy()
@@ -546,6 +549,7 @@ public class GameplayManager : MonoBehaviour
         _speedUpText.gameObject.SetActive(true);
 
         _moveSpeedUpTextTween = _speedUpTextRectTransform.DOAnchorPosX(-325f, 0.25f)
+            .From(_speedUpTextInitialPosition)
             .SetEase(Ease.OutQuad)
             .SetLoops(-1, LoopType.Yoyo)
             .SetLink(gameObject);
