@@ -16,7 +16,7 @@ public class Ball : MonoBehaviour
     {
         if (_isLaunched)
         {
-            _rigidbody2D.velocity = _rigidbody2D.velocity.normalized * _speed;
+            _rigidbody2D.linearVelocity = _rigidbody2D.linearVelocity.normalized * _speed;
 
             if (transform.position.y < -5f)
             {
@@ -62,7 +62,7 @@ public class Ball : MonoBehaviour
     {
         _isLaunched = false;
 
-        _rigidbody2D.velocity = Vector2.zero;
+        _rigidbody2D.linearVelocity = Vector2.zero;
 
         Vector2 targetPosition = transform.position;
         targetPosition.x = Mathf.Clamp(targetPosition.x, -3.35f, 3.35f);
