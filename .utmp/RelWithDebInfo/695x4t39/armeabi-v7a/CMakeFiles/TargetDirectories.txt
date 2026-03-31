@@ -1,0 +1,5 @@
+/Users/Oleg/Documents/GitHub/BallsAndBricks/.utmp/RelWithDebInfo/695x4t39/armeabi-v7a/CMakeFiles/edit_cache.dir
+/Users/Oleg/Documents/GitHub/BallsAndBricks/.utmp/RelWithDebInfo/695x4t39/armeabi-v7a/CMakeFiles/rebuild_cache.dir
+/Users/Oleg/Documents/GitHub/BallsAndBricks/.utmp/RelWithDebInfo/695x4t39/armeabi-v7a/FramePacing/CMakeFiles/swappywrapper.dir
+/Users/Oleg/Documents/GitHub/BallsAndBricks/.utmp/RelWithDebInfo/695x4t39/armeabi-v7a/FramePacing/CMakeFiles/edit_cache.dir
+/Users/Oleg/Documents/GitHub/BallsAndBricks/.utmp/RelWithDebInfo/695x4t39/armeabi-v7a/FramePacing/CMakeFiles/rebuild_cache.dir
